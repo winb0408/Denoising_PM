@@ -1,0 +1,19 @@
+# Generated experiment outputs
+runs/
+
+# Python/cache artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Training artifacts
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+
+# Logs/temp files
+*.log
+*.jsonl
+tmp/
+temp/

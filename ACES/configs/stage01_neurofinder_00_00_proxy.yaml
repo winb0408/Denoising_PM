@@ -1,0 +1,14 @@
+seed: 3407
+run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage01_neurofinder_00_00_proxy_pairability_seed3407
+
+data:
+  stack_path: /data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/train/neurofinder_00_00_stack.tif
+  regions_path: /data2/wjb/Denoising_PM/Methods/FAST-main/data/neurofinder.00.00/regions/regions.json
+
+analysis:
+  max_frames: 512
+  max_distance: 8
+  max_samples_per_stat: 100000
+  structure_sigma: 0.8
+  proxy_sigma: 0.8
+  q_threshold: 0.6

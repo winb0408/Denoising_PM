@@ -1,0 +1,47 @@
+seed: 3407
+run_dir: /data2/wjb/Denoising_PM/ACES/qmask/runs/qmask_3p_smoke_seed3407
+notes: >
+  QMask smoke: 1 batch 验证训练/评估/可视化闭环。patch_num=-1 保留 z 深度网格，
+  用 max_batches_per_epoch=1 限制成本（patch_num 会触发 VALID 合并 z 窗口，不可用）。
+
+geometry:
+  stage1_run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage01_3p_repeat_pairability_seed3407
+  region: foreground
+  noise_source: repeat
+  tau_n: 0.95
+  tau_s: 0.85
+  tau_q: 0.60
+
+sampling:
+  modes: [valid, sn2n_xy, iso3d, qmask]
+
+training:
+  train_folder: /data2/wjb/Denoising_PM/Methods/FAST-main/reproduction/valid_comparison/experiments/valid_paper_3p_neuron/original_workflow_paper_params_repeat01_seed3407/data/train_repeat01_275z
+  train_frame_num: 10000
+  epochs: 1
+  max_batches_per_epoch: 1
+  eval_every_epochs: 1
+  z_patch: 16
+  w_patch: 64
+  h_patch: 64
+  z_overlap: 0.0
+  w_overlap: 0.0
+  h_overlap: 0.0
+  patch_num: -1
+  batch_size: 1
+  num_workers: 0
+  lr: 0.0001
+  base_features: 16
+  n_groups: 4
+  weight_reg: 0.0001
+  clip_gradients: 100.0
+  bg_reg_weight: 0.0
+  bg_percentile: 25.0
+
+evaluation:
+  mean9_proxy: /data2/wjb/Denoising_PM/Methods/FAST-main/reproduction/valid_comparison/experiments/valid_paper_3p_neuron/original_workflow_paper_params_repeat01_seed3407/data/gt_proxy/3P_neuron_mean9_gt_proxy_275z.tif
+  foreground_mask: null
+  foreground_percentile: 75.0
+  patch_count: 1
+  depth_bins: 2
+  depth_patch_cap: 2

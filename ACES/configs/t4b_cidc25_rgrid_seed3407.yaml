@@ -1,0 +1,39 @@
+seed: 3407
+# T4b 切片 2 (Plan v2 §4 item 8/10b): 时间配对距离 d 网格 (r_a 网格) → H3 闭环。
+# 训练: CIDC25 Training 集 4 栈 (A1/B1/C2/D2, 使用条款允许); 变体 = 时间配对距离 d。
+# 评估: Validation F1/F2/F3 对真值 F0 (仅评估/模型选择, 条款允许), 18 patch, fg 75 分位。
+# 闭环: Q_t(d) (第一切片曲线, region=foreground, τ_s=0.85) vs 实测 PSNR(d) 的 Spearman。
+# run_dir 在 /data3 (/data2 只读)。
+run_dir: /data3/wjb/Denoising_PM/ACES/runs/stage01_cidc25_rgrid_seed3407
+
+data_root: /data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25
+
+training:
+  epochs: 20
+  max_batches_per_epoch: 100
+  eval_every_epochs: 5
+  z_patch: 64
+  w_patch: 128
+  h_patch: 128
+  overlap: 0.1
+  batch_size: 1
+  num_workers: 2
+  lr: 0.0001
+  base_features: 16
+  n_groups: 4
+  weight_reg: 0.0001
+  clip_gradients: 100.0
+  bg_reg_weight: 0.0
+  bg_percentile: 25.0
+
+evaluation:
+  patch_count: 18
+  foreground_percentile: 75.0
+  selection_level: F2
+  mid_patch_count: 12
+
+analysis:
+  stage1_curves_csv: /data3/wjb/Denoising_PM/ACES/runs/stage01_cidc25_gt_pairability_seed3407/metrics/pairability_curves.csv
+  tau_s: 0.85
+  distances: [1, 2, 3, 4, 6, 8, 16, 32, 64]
+  weight_set: best

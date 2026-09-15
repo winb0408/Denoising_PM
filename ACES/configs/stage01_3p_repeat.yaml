@@ -1,0 +1,31 @@
+seed: 3407
+run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage01_3p_repeat_pairability_seed3407
+
+data:
+  repeats_root: /data2/wjb/Denoising_PM/Methods/FAST-main/reproduction/valid_comparison/experiments/valid_paper_3p_neuron/original_workflow_paper_params_repeat01_seed3407/data/all_repeats_275z
+  crop: null
+
+physical_spacing_um:
+  # XY: from raw TIFF Info block XResolution/YResolution = 12350.803731437707 px/cm
+  # with ResolutionUnit=Centimeter -> 10000 um / 12350.8037 = 0.8096639067 um/px.
+  # NOTE: the earlier value 0.0087890625 was ScanImage pixelToRefTransform
+  # (a normalized reference-frame coefficient), NOT the physical pixel pitch.
+  x: 0.8096639067  # um/px
+  y: 0.8096639067  # um/px
+  # Z: dz per depth group. Raw ImageJ wrapper reports spacing=0.4 um but treats
+  # 2475 frames as a flat stack; a frame-order audit showed the true layout is
+  # 275 depth groups x 9 repeats. dz=4.0 um/group is derived from the corrected
+  # layout aligned to the paper Fig.2 0-1100 um depth range, not a clean single
+  # z calibration in the raw TIFF.
+  z: 4.0
+
+analysis:
+  max_distance: 8
+  depth_bins: 5
+  foreground_percentile: 75.0
+  max_samples_per_stat: 100000
+  proxy_sigma: 0.8
+  structure_sigma: 0.8
+  gate_xy_z_ratio: 1.2
+  gate_metric: Q
+  gate_region: foreground

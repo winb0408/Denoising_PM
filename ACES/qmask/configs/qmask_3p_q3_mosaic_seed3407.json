@@ -1,0 +1,48 @@
+{
+  "seed": 3407,
+  "run_dir": "/data2/wjb/Denoising_PM/ACES/qmask/runs/qmask_3p_q3_mosaic_seed3407",
+  "notes": "Q-3 消融（Plan v2 §2.2）：qmask 全开 vs valid 的 1.49dB 差距归因。sampling.row_mode=mosaic 使 qmask 用逐位置随机 Tetris 行（VALID-like 马赛克视图），与 valid 的唯一机制差异收窄到行选择粒度。同进程跑 valid 作对照。协议与 qmask_3p_pilot_seed3407 完全一致（3ep x 64 batches，9 fg patch，5 深度分箱）。\n",
+  "geometry": {
+    "stage1_run_dir": "/data2/wjb/Denoising_PM/ACES/runs/stage01_3p_repeat_pairability_seed3407",
+    "region": "foreground",
+    "noise_source": "repeat",
+    "tau_n": 0.95,
+    "tau_s": 0.85,
+    "tau_q": 0.6
+  },
+  "sampling": {
+    "modes": ["valid", "qmask"],
+    "row_mode": "mosaic"
+  },
+  "training": {
+    "train_folder": "/data2/wjb/Denoising_PM/Methods/FAST-main/reproduction/valid_comparison/experiments/valid_paper_3p_neuron/original_workflow_paper_params_repeat01_seed3407/data/train_repeat01_275z",
+    "train_frame_num": 10000,
+    "epochs": 3,
+    "max_batches_per_epoch": 64,
+    "eval_every_epochs": 1,
+    "z_patch": 16,
+    "w_patch": 64,
+    "h_patch": 64,
+    "z_overlap": 0.0,
+    "w_overlap": 0.0,
+    "h_overlap": 0.0,
+    "patch_num": -1,
+    "batch_size": 1,
+    "num_workers": 0,
+    "lr": 0.0001,
+    "base_features": 16,
+    "n_groups": 4,
+    "weight_reg": 0.0001,
+    "clip_gradients": 100.0,
+    "bg_reg_weight": 0.0,
+    "bg_percentile": 25.0
+  },
+  "evaluation": {
+    "mean9_proxy": "/data2/wjb/Denoising_PM/Methods/FAST-main/reproduction/valid_comparison/experiments/valid_paper_3p_neuron/original_workflow_paper_params_repeat01_seed3407/data/gt_proxy/3P_neuron_mean9_gt_proxy_275z.tif",
+    "foreground_mask": null,
+    "foreground_percentile": 75.0,
+    "patch_count": 9,
+    "depth_bins": 5,
+    "depth_patch_cap": 2000
+  }
+}

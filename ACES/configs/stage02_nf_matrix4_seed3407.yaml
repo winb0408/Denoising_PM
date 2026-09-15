@@ -1,0 +1,46 @@
+seed: 3407
+# nf 重复矩阵 (Plan v2 §4 item 10a): 4 臂 [valid, sn2n_xy, iso3d, qmask] × 3 seeds (3407/3408/3409)
+# 预算: 80ep × 100 batch/ep = 8,000 updates/run (~1h), 评估 18 patch 与外部 nf 行同尺。
+# qmask 臂: Q-2 修订 (n_decision=false, proxy 分支 S+Q 主导); τ 取 Q-1 默认工作点。
+# run_dir 在 /data3 (/data2 只读)。
+run_dir: /data3/wjb/Denoising_PM/ACES/runs/stage02_nf_matrix4_seed3407
+
+sampling:
+  modes: [valid, sn2n_xy, iso3d, qmask]
+
+geometry:
+  stage1_run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage01_neurofinder_00_00_proxy_pairability_seed3407
+  region: foreground
+  noise_source: proxy
+  tau_n: 0.95
+  tau_s: 0.85
+  tau_q: 0.60
+  n_decision: false
+
+training:
+  train_folder: /data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/train
+  train_frame_num: 10000
+  epochs: 80
+  max_batches_per_epoch: 100
+  eval_every_epochs: 10
+  log_every_batches: 20
+  z_patch: 64
+  w_patch: 128
+  h_patch: 128
+  z_overlap: 0.1
+  w_overlap: 0.1
+  h_overlap: 0.1
+  patch_num: -1
+  batch_size: 1
+  num_workers: 0
+  lr: 0.0001
+  base_features: 16
+  n_groups: 4
+  weight_reg: 0.0001
+  clip_gradients: 100.0
+
+evaluation:
+  mean9_proxy: /data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/proxy/neurofinder_00_00_temporal_mean.tif
+  foreground_mask: /data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/proxy/neurofinder_00_00_roi_mask.tif
+  patch_count: 18
+  foreground_percentile: 75.0

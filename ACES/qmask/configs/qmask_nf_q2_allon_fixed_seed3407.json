@@ -1,0 +1,49 @@
+{
+  "seed": 3407,
+  "run_dir": "/data3/wjb/Denoising_PM/ACES/qmask/runs/qmask_nf_q2_allon_fixed_seed3407",
+  "notes": "Q-2 验证（Plan v2 §4 item 3）：neurofinder 上 use_n_decision=false（proxy-N 降级，d_min=1，T3b 依据）→ 掩码由 S/Q 决定（预期全开 111），row_mode=fixed。与原 pilot（n_decision=true → 提升掩码 101=z.x，fixed）对比即可隔离 Q-2 开关的作用。协议与 qmask_neurofinder_pilot 完全一致。\n",
+  "geometry": {
+    "stage1_run_dir": "/data2/wjb/Denoising_PM/ACES/runs/stage01_neurofinder_00_00_proxy_pairability_seed3407",
+    "region": "foreground",
+    "noise_source": "proxy",
+    "tau_n": 0.95,
+    "tau_s": 0.85,
+    "tau_q": 0.6,
+    "n_decision": false
+  },
+  "sampling": {
+    "modes": ["qmask"],
+    "row_mode": "fixed"
+  },
+  "training": {
+    "train_folder": "/data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/train",
+    "train_frame_num": 10000,
+    "epochs": 3,
+    "max_batches_per_epoch": 64,
+    "eval_every_epochs": 1,
+    "z_patch": 64,
+    "w_patch": 128,
+    "h_patch": 128,
+    "z_overlap": 0.0,
+    "w_overlap": 0.0,
+    "h_overlap": 0.0,
+    "patch_num": -1,
+    "batch_size": 1,
+    "num_workers": 0,
+    "lr": 0.0001,
+    "base_features": 16,
+    "n_groups": 4,
+    "weight_reg": 0.0001,
+    "clip_gradients": 100.0,
+    "bg_reg_weight": 0.0,
+    "bg_percentile": 25.0
+  },
+  "evaluation": {
+    "mean9_proxy": "/data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/proxy/neurofinder_00_00_temporal_mean.tif",
+    "foreground_mask": "/data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/proxy/neurofinder_00_00_roi_mask.tif",
+    "foreground_percentile": 75.0,
+    "patch_count": 9,
+    "depth_bins": 5,
+    "depth_patch_cap": 2000
+  }
+}

@@ -1,0 +1,38 @@
+seed: 3407
+run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage02_neurofinder_00_00_fastpilot_seed3407
+
+sampling:
+  modes: [valid, sn2n_xy, iso3d, empirical_block, ellipsoid]
+  stage1_run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage01_neurofinder_00_00_proxy_pairability_seed3407
+  q_threshold: 0.6
+  region: foreground
+  noise_source: proxy
+  metric: Q
+
+training:
+  train_folder: /data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/train
+  train_frame_num: 10000
+  epochs: 10
+  max_batches_per_epoch: 4
+  eval_every_epochs: 5
+  log_every_batches: 1
+  z_patch: 32
+  w_patch: 64
+  h_patch: 64
+  z_overlap: 0.1
+  w_overlap: 0.1
+  h_overlap: 0.1
+  patch_num: -1
+  batch_size: 1
+  num_workers: 0
+  lr: 0.0001
+  base_features: 16
+  n_groups: 4
+  weight_reg: 0.0001
+  clip_gradients: 100.0
+
+evaluation:
+  mean9_proxy: /data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/proxy/neurofinder_00_00_temporal_mean.tif
+  foreground_mask: /data2/wjb/Denoising_PM/ACES/data/neurofinder.00.00/proxy/neurofinder_00_00_roi_mask.tif
+  patch_count: 8
+  foreground_percentile: 75.0

@@ -1,0 +1,12 @@
+# 权重与大文件（快照原则：永不入库）
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+*.tif
+*.tiff
+checkpoints/
+__pycache__/
+*.pyc
+sampler_metadata.json
+runs_archive/

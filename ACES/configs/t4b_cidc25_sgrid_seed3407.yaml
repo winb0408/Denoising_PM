@@ -1,0 +1,40 @@
+seed: 3407
+# A2 (Plan v2 §7 P-A): 空间轴闭环 —— y/x 对角平移 s 网格 (sgrid)。
+# 配对: input = 帧 t..t+63 @ (y0,x0); target = 同帧段 @ (y0+s,x0+s)。s=0 恒等捷径对照。
+# 奇数 s 相位视图配对交换 (out1<->v4, out2<->v3), 见 qmask/t4b_sgrid.py。
+# 训练: CIDC25 Training 4 栈 (使用条款允许); 评估: Validation F1/F2/F3 vs F0 (仅评估/模型选择)。
+# 协议与 t4b_cidc25_rgrid_seed3407.yaml 完全一致 (20ep x 100batch)。
+# run_dir 在 /data3 (/data2 只读)。
+run_dir: /data3/wjb/Denoising_PM/ACES/runs/stage01_cidc25_sgrid_seed3407
+
+data_root: /data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25
+
+training:
+  epochs: 20
+  max_batches_per_epoch: 100
+  eval_every_epochs: 5
+  z_patch: 64
+  w_patch: 128
+  h_patch: 128
+  overlap: 0.1
+  batch_size: 1
+  num_workers: 2
+  lr: 0.0001
+  base_features: 16
+  n_groups: 4
+  weight_reg: 0.0001
+  clip_gradients: 100.0
+  bg_reg_weight: 0.0
+  bg_percentile: 25.0
+
+evaluation:
+  patch_count: 18
+  foreground_percentile: 75.0
+  selection_level: F2
+  mid_patch_count: 12
+
+analysis:
+  shifts: [0, 1, 2, 4, 8, 16]
+  weight_set: best
+  nmse_threshold: 0.02
+  n_tiles: 8

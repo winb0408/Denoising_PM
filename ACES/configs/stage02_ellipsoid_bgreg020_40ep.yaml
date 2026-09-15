@@ -1,0 +1,40 @@
+seed: 3407
+# 背景正则对照实验（高权重档）：在 SBR 最优的 ellipsoid 创新档上叠加自监督背景正则，
+# 目标是压低 std_bg_pred（背景残差）同时尽量保住 SBR 优势。bg_reg_weight=0.2。
+run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage02_ellipsoid_bgreg020_40ep_seed3407
+
+sampling:
+  modes: [ellipsoid]
+  stage1_run_dir: /data2/wjb/Denoising_PM/ACES/runs/stage01_3p_repeat_pairability_seed3407
+  q_threshold: 0.8
+  region: foreground
+  noise_source: repeat
+  metric: Q
+
+training:
+  train_folder: /data2/wjb/Denoising_PM/Methods/FAST-main/reproduction/valid_comparison/experiments/valid_paper_3p_neuron/original_workflow_paper_params_repeat01_seed3407/data/train_repeat01_275z
+  train_frame_num: 10000
+  epochs: 40
+  max_batches_per_epoch: -1
+  eval_every_epochs: 5
+  z_patch: 64
+  w_patch: 128
+  h_patch: 128
+  z_overlap: 0.1
+  w_overlap: 0.1
+  h_overlap: 0.1
+  patch_num: -1
+  batch_size: 1
+  num_workers: 0
+  lr: 0.0001
+  base_features: 16
+  n_groups: 4
+  weight_reg: 0.0001
+  clip_gradients: 100.0
+  bg_reg_weight: 0.2
+  bg_percentile: 25.0
+
+evaluation:
+  mean9_proxy: /data2/wjb/Denoising_PM/Methods/FAST-main/reproduction/valid_comparison/experiments/valid_paper_3p_neuron/original_workflow_paper_params_repeat01_seed3407/data/gt_proxy/3P_neuron_mean9_gt_proxy_275z.tif
+  patch_count: 18
+  foreground_percentile: 75.0
