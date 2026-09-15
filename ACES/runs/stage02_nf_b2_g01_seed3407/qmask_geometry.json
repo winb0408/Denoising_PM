@@ -1,0 +1,86 @@
+{
+  "source": "/data2/wjb/Denoising_PM/ACES/runs/stage01_neurofinder_00_00_proxy_pairability_seed3407/metrics/pairability_curves.csv",
+  "region": "foreground",
+  "noise_source": "proxy",
+  "tau_n": 0.95,
+  "tau_s": 0.85,
+  "tau_q": 0.6,
+  "axes": {
+    "z": {
+      "axis": "z",
+      "participate": true,
+      "reason": "legal d=1 pair",
+      "d_min": 1,
+      "d_max": 5,
+      "n_d1": 0.9001702950283798,
+      "s_d1": 0.9697247827862971,
+      "q_d1": 0.8729174438170726,
+      "distances": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "y": {
+      "axis": "y",
+      "participate": true,
+      "reason": "legal d=1 pair",
+      "d_min": 1,
+      "d_max": 3,
+      "n_d1": 0.9033975586576746,
+      "s_d1": 0.9682584576283789,
+      "q_d1": 0.8747223267711229,
+      "distances": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "x": {
+      "axis": "x",
+      "participate": true,
+      "reason": "legal d=1 pair",
+      "d_min": 1,
+      "d_max": 4,
+      "n_d1": 0.9474417562718582,
+      "s_d1": 0.9710082441789883,
+      "q_d1": 0.919973756219394,
+      "distances": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    }
+  },
+  "fallback_order": [
+    "x",
+    "z",
+    "y"
+  ],
+  "promote_reason": null,
+  "participate": {
+    "z": true,
+    "y": true,
+    "x": true
+  },
+  "effective_participate": {
+    "z": true,
+    "y": true,
+    "x": true
+  }
+}

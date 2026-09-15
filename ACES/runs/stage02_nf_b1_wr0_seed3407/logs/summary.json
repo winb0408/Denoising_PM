@@ -1,0 +1,215 @@
+{
+  "event": "qmask_stage2_complete",
+  "run_dir": "/data3/wjb/Denoising_PM/ACES/runs/stage02_nf_b1_wr0_seed3407",
+  "modes": [
+    {
+      "event": "qmask_stage2_mode_complete",
+      "mode": "qmask",
+      "mode_dir": "/data3/wjb/Denoising_PM/ACES/runs/stage02_nf_b1_wr0_seed3407/qmask",
+      "checkpoint": "/data3/wjb/Denoising_PM/ACES/runs/stage02_nf_b1_wr0_seed3407/qmask/checkpoints/qmask_final.pth",
+      "train_batches": 106000,
+      "elapsed_seconds": 147294.66961768363,
+      "final_loss": 0.466361403465271,
+      "eval_regions": {
+        "all": {
+          "mse": 2470.246663071063,
+          "mae": 23.815203698178166,
+          "psnr_db": 29.2277586200559,
+          "ssim": 0.8276635430690397,
+          "snr_db": 5.727195606872672,
+          "sbr_db": -0.14120075218324482,
+          "pred_mean": 136.01831659547074,
+          "target_mean": 141.6615689524915,
+          "pred_std": 64.62659528122009,
+          "target_std": 71.04581111037695,
+          "n_voxels": 18874368
+        },
+        "foreground": {
+          "mse": 1536.6475498643704,
+          "mae": 20.33595995698963,
+          "psnr_db": 22.066057954427002,
+          "ssim": 0.8276635430690397,
+          "snr_db": 4.903056609896859,
+          "sbr_db": -0.9653397491590591,
+          "pred_mean": 123.225397958067,
+          "target_mean": 126.38893330912144,
+          "pred_std": 48.96951032696235,
+          "target_std": 48.07590787718993,
+          "n_voxels": 2898432
+        },
+        "background": {
+          "mse": 2639.6247542758533,
+          "mae": 24.44642501724583,
+          "psnr_db": 29.29460779775154,
+          "ssim": 0.8276635430690397,
+          "snr_db": NaN,
+          "sbr_db": NaN,
+          "pred_mean": 138.33927010655438,
+          "target_mean": 144.43240478164634,
+          "pred_std": 66.78932939127294,
+          "target_std": 74.12104353107875,
+          "n_voxels": 15975936
+        }
+      },
+      "eval_regions_aligned": {
+        "all": {
+          "mse": 2397.389491635287,
+          "mae": 24.855844309304505,
+          "psnr_db": 29.809216147810584,
+          "ssim": 0.8011451426838424,
+          "snr_db": 5.691416239217692,
+          "sbr_db": -0.14415229769562632,
+          "pred_mean": 137.3822309643858,
+          "target_mean": 140.91908830963075,
+          "pred_std": 67.16883399482279,
+          "target_std": 69.90564766105949,
+          "n_voxels": 2359296
+        },
+        "foreground": {
+          "mse": 1576.365383722918,
+          "mae": 21.692740605116953,
+          "psnr_db": 21.364424664947663,
+          "ssim": 0.8011451426838424,
+          "snr_db": 4.875998485223677,
+          "sbr_db": -0.9595700516896416,
+          "pred_mean": 124.51824719636433,
+          "target_mean": 125.99843253144539,
+          "pred_std": 47.44423591599371,
+          "target_std": 47.338314688611575,
+          "n_voxels": 372096
+        },
+        "background": {
+          "mse": 2551.12328111685,
+          "mae": 25.44812401739296,
+          "psnr_db": 29.52974435635006,
+          "ssim": 0.8011451426838424,
+          "snr_db": NaN,
+          "sbr_db": NaN,
+          "pred_mean": 139.790965316311,
+          "target_mean": 143.71292704374895,
+          "pred_std": 69.96262765542495,
+          "target_std": 73.02561358744896,
+          "n_voxels": 1987200
+        }
+      },
+      "aligned_stride": [
+        2,
+        2,
+        2
+      ],
+      "depth_binned": {
+        "bins": [
+          {
+            "bin": 0,
+            "z_range": [
+              0,
+              570
+            ],
+            "foreground_psnr_db": 22.860618997028165,
+            "patch_count": 275
+          },
+          {
+            "bin": 1,
+            "z_range": [
+              627,
+              1140
+            ],
+            "foreground_psnr_db": 21.996482722929223,
+            "patch_count": 250
+          },
+          {
+            "bin": 2,
+            "z_range": [
+              1197,
+              1767
+            ],
+            "foreground_psnr_db": 22.299254094346725,
+            "patch_count": 275
+          },
+          {
+            "bin": 3,
+            "z_range": [
+              1824,
+              2337
+            ],
+            "foreground_psnr_db": 19.100118188558778,
+            "patch_count": 250
+          },
+          {
+            "bin": 4,
+            "z_range": [
+              2394,
+              2964
+            ],
+            "foreground_psnr_db": 21.207648780320785,
+            "patch_count": 275
+          }
+        ],
+        "overall_foreground_psnr_db": 21.528466975538347,
+        "patch_count": 1325,
+        "z_range_global": [
+          0,
+          2964
+        ],
+        "bins_count": 5,
+        "stride": [
+          2,
+          2,
+          2
+        ]
+      },
+      "best_epoch": 30,
+      "best_fg_psnr_db": 23.085765615999858,
+      "eval_curve": [
+        {
+          "epoch": 10,
+          "batch": 13250,
+          "fg_psnr_db": 22.90853816728596,
+          "all_psnr_db": 29.968301093798864
+        },
+        {
+          "epoch": 20,
+          "batch": 26500,
+          "fg_psnr_db": 22.78744660121391,
+          "all_psnr_db": 30.045952529507808
+        },
+        {
+          "epoch": 30,
+          "batch": 39750,
+          "fg_psnr_db": 23.085765615999858,
+          "all_psnr_db": 29.90622357646114
+        },
+        {
+          "epoch": 40,
+          "batch": 53000,
+          "fg_psnr_db": 22.905855755546753,
+          "all_psnr_db": 29.694855694879656
+        },
+        {
+          "epoch": 50,
+          "batch": 66250,
+          "fg_psnr_db": 22.20659314110243,
+          "all_psnr_db": 29.407316133757718
+        },
+        {
+          "epoch": 60,
+          "batch": 79500,
+          "fg_psnr_db": 22.9892549945145,
+          "all_psnr_db": 29.526435714897875
+        },
+        {
+          "epoch": 70,
+          "batch": 92750,
+          "fg_psnr_db": 22.75500516560805,
+          "all_psnr_db": 29.242566677774604
+        },
+        {
+          "epoch": 80,
+          "batch": 106000,
+          "fg_psnr_db": 22.066057954427002,
+          "all_psnr_db": 29.2277586200559
+        }
+      ]
+    }
+  ]
+}

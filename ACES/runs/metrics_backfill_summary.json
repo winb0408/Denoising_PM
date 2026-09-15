@@ -1,0 +1,349 @@
+{
+ "rows": [
+  {
+   "tag": "qmask80ep:3407",
+   "file": "best_metrics-al",
+   "fg_psnr": 23.23,
+   "ssim": 0.7205,
+   "snr_db": 6.84,
+   "sbr_db": 0.15,
+   "fg_std_ratio": 0.879
+  },
+  {
+   "tag": "qmask80ep:3407",
+   "file": "metrics-al",
+   "fg_psnr": 22.17,
+   "ssim": 0.7237,
+   "snr_db": 6.24,
+   "sbr_db": 0.17,
+   "fg_std_ratio": 0.953
+  },
+  {
+   "tag": "qmask80ep:3408",
+   "file": "best_metrics-al",
+   "fg_psnr": 23.13,
+   "ssim": 0.6979,
+   "snr_db": 6.91,
+   "sbr_db": 0.15,
+   "fg_std_ratio": 0.858
+  },
+  {
+   "tag": "qmask80ep:3408",
+   "file": "metrics-al",
+   "fg_psnr": 23.43,
+   "ssim": 0.7249,
+   "snr_db": 6.78,
+   "sbr_db": 0.18,
+   "fg_std_ratio": 0.918
+  },
+  {
+   "tag": "qmask80ep:3409",
+   "file": "best_metrics-al",
+   "fg_psnr": 22.89,
+   "ssim": 0.6971,
+   "snr_db": 7.2,
+   "sbr_db": 0.17,
+   "fg_std_ratio": 0.82
+  },
+  {
+   "tag": "qmask80ep:3409",
+   "file": "metrics-al",
+   "fg_psnr": 23.42,
+   "ssim": 0.7243,
+   "snr_db": 6.73,
+   "sbr_db": 0.19,
+   "fg_std_ratio": 0.899
+  },
+  {
+   "tag": "matrix:3407:iso3d",
+   "file": "metrics-al",
+   "fg_psnr": 20.06,
+   "ssim": 0.6565,
+   "snr_db": 5.34,
+   "sbr_db": 0.23,
+   "fg_std_ratio": 0.93
+  },
+  {
+   "tag": "matrix:3407:qmask",
+   "file": "metrics-al",
+   "fg_psnr": 19.92,
+   "ssim": 0.6537,
+   "snr_db": 5.42,
+   "sbr_db": 0.23,
+   "fg_std_ratio": 0.918
+  },
+  {
+   "tag": "matrix:3407:sn2n_xy",
+   "file": "metrics-al",
+   "fg_psnr": 21.39,
+   "ssim": 0.6627,
+   "snr_db": 6.63,
+   "sbr_db": 0.05,
+   "fg_std_ratio": 0.949
+  },
+  {
+   "tag": "matrix:3407:valid",
+   "file": "metrics-al",
+   "fg_psnr": 20.54,
+   "ssim": 0.6748,
+   "snr_db": 5.9,
+   "sbr_db": 0.19,
+   "fg_std_ratio": 0.909
+  },
+  {
+   "tag": "matrix:3408:iso3d",
+   "file": "metrics-al",
+   "fg_psnr": 20.61,
+   "ssim": 0.6659,
+   "snr_db": 5.99,
+   "sbr_db": 0.3,
+   "fg_std_ratio": 0.848
+  },
+  {
+   "tag": "matrix:3408:qmask",
+   "file": "metrics-al",
+   "fg_psnr": 21.71,
+   "ssim": 0.6776,
+   "snr_db": 6.71,
+   "sbr_db": 0.19,
+   "fg_std_ratio": 0.831
+  },
+  {
+   "tag": "matrix:3408:sn2n_xy",
+   "file": "metrics-al",
+   "fg_psnr": 19.72,
+   "ssim": 0.6628,
+   "snr_db": 5.91,
+   "sbr_db": 0.18,
+   "fg_std_ratio": 0.865
+  },
+  {
+   "tag": "matrix:3408:valid",
+   "file": "metrics-al",
+   "fg_psnr": 19.54,
+   "ssim": 0.6668,
+   "snr_db": 5.43,
+   "sbr_db": 0.24,
+   "fg_std_ratio": 0.889
+  },
+  {
+   "tag": "matrix:3409:iso3d",
+   "file": "metrics-al",
+   "fg_psnr": 21.73,
+   "ssim": 0.6661,
+   "snr_db": 6.58,
+   "sbr_db": 0.07,
+   "fg_std_ratio": 0.897
+  },
+  {
+   "tag": "matrix:3409:qmask",
+   "file": "metrics-al",
+   "fg_psnr": 22.07,
+   "ssim": 0.6811,
+   "snr_db": 6.51,
+   "sbr_db": 0.16,
+   "fg_std_ratio": 0.911
+  },
+  {
+   "tag": "matrix:3409:sn2n_xy",
+   "file": "metrics-al",
+   "fg_psnr": 21.47,
+   "ssim": 0.6695,
+   "snr_db": 6.51,
+   "sbr_db": 0.2,
+   "fg_std_ratio": 0.923
+  },
+  {
+   "tag": "matrix:3409:valid",
+   "file": "metrics-al",
+   "fg_psnr": 22.09,
+   "ssim": 0.6871,
+   "snr_db": 6.57,
+   "sbr_db": 0.14,
+   "fg_std_ratio": 0.916
+  }
+ ],
+ "rgrid_best": {
+  "1": {
+   "1": {
+    "psnr": 24.43,
+    "ssim": 0.6777,
+    "sbr": 4.0,
+    "std_ratio": 0.918
+   },
+   "2": {
+    "psnr": 18.04,
+    "ssim": 0.3064,
+    "sbr": 3.89,
+    "std_ratio": 1.309
+   },
+   "3": {
+    "psnr": 12.9,
+    "ssim": 0.1295,
+    "sbr": 4.38,
+    "std_ratio": 2.193
+   }
+  },
+  "2": {
+   "1": {
+    "psnr": 24.81,
+    "ssim": 0.6836,
+    "sbr": 4.02,
+    "std_ratio": 0.936
+   },
+   "2": {
+    "psnr": 18.22,
+    "ssim": 0.3111,
+    "sbr": 3.8,
+    "std_ratio": 1.302
+   },
+   "3": {
+    "psnr": 13.04,
+    "ssim": 0.1322,
+    "sbr": 4.09,
+    "std_ratio": 2.153
+   }
+  },
+  "3": {
+   "1": {
+    "psnr": 25.08,
+    "ssim": 0.7026,
+    "sbr": 3.91,
+    "std_ratio": 0.883
+   },
+   "2": {
+    "psnr": 18.7,
+    "ssim": 0.3279,
+    "sbr": 3.62,
+    "std_ratio": 1.238
+   },
+   "3": {
+    "psnr": 13.46,
+    "ssim": 0.1406,
+    "sbr": 3.84,
+    "std_ratio": 2.053
+   }
+  },
+  "4": {
+   "1": {
+    "psnr": 25.49,
+    "ssim": 0.7459,
+    "sbr": 3.43,
+    "std_ratio": 0.799
+   },
+   "2": {
+    "psnr": 20.32,
+    "ssim": 0.3941,
+    "sbr": 2.99,
+    "std_ratio": 1.033
+   },
+   "3": {
+    "psnr": 15.14,
+    "ssim": 0.1769,
+    "sbr": 2.8,
+    "std_ratio": 1.661
+   }
+  },
+  "6": {
+   "1": {
+    "psnr": 26.85,
+    "ssim": 0.852,
+    "sbr": 3.74,
+    "std_ratio": 0.778
+   },
+   "2": {
+    "psnr": 24.43,
+    "ssim": 0.71,
+    "sbr": 3.29,
+    "std_ratio": 0.758
+   },
+   "3": {
+    "psnr": 19.88,
+    "ssim": 0.4917,
+    "sbr": 3.15,
+    "std_ratio": 0.894
+   }
+  },
+  "8": {
+   "1": {
+    "psnr": 27.82,
+    "ssim": 0.8847,
+    "sbr": 3.81,
+    "std_ratio": 0.977
+   },
+   "2": {
+    "psnr": 25.63,
+    "ssim": 0.7559,
+    "sbr": 3.81,
+    "std_ratio": 0.828
+   },
+   "3": {
+    "psnr": 22.54,
+    "ssim": 0.5727,
+    "sbr": 4.0,
+    "std_ratio": 0.902
+   }
+  },
+  "16": {
+   "1": {
+    "psnr": 28.35,
+    "ssim": 0.8858,
+    "sbr": 3.88,
+    "std_ratio": 0.97
+   },
+   "2": {
+    "psnr": 25.12,
+    "ssim": 0.7551,
+    "sbr": 3.85,
+    "std_ratio": 0.821
+   },
+   "3": {
+    "psnr": 22.15,
+    "ssim": 0.5731,
+    "sbr": 4.09,
+    "std_ratio": 0.882
+   }
+  },
+  "32": {
+   "1": {
+    "psnr": 26.41,
+    "ssim": 0.8792,
+    "sbr": 3.44,
+    "std_ratio": 0.75
+   },
+   "2": {
+    "psnr": 25.01,
+    "ssim": 0.7541,
+    "sbr": 3.37,
+    "std_ratio": 0.77
+   },
+   "3": {
+    "psnr": 22.5,
+    "ssim": 0.585,
+    "sbr": 3.18,
+    "std_ratio": 0.82
+   }
+  },
+  "64": {
+   "1": {
+    "psnr": 27.43,
+    "ssim": 0.8903,
+    "sbr": 4.15,
+    "std_ratio": 0.758
+   },
+   "2": {
+    "psnr": 25.26,
+    "ssim": 0.7643,
+    "sbr": 3.88,
+    "std_ratio": 0.744
+   },
+   "3": {
+    "psnr": 22.89,
+    "ssim": 0.6042,
+    "sbr": 3.86,
+    "std_ratio": 0.788
+   }
+  }
+ },
+ "note": "C2 \u8865\u5217\u540e\u7edf\u4e00\u91cd\u8bc4\uff08\u63a8\u7406 cudnn \u975e\u786e\u5b9a\u6027\uff0cfg PSNR \u76f8\u5bf9\u65e7\u6587\u4ef6 \u00b10.3 dB\uff09\uff1b\u5b98\u65b9\u8868\u4ee5\u672c\u6279\u6587\u4ef6\u4e3a\u51c6\u6574\u5957\u751f\u6210"
+}

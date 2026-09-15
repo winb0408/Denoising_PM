@@ -1,0 +1,46 @@
+{
+  "event": "aces_cidc25_pairability_complete",
+  "run_dir": "/data3/wjb/Denoising_PM/ACES/runs/stage01_cidc25_gt_pairability_seed3407",
+  "clean_path": "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25/Validation/F0.tif",
+  "noisy_paths": [
+    "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25/Validation/F1.tif",
+    "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25/Validation/F2.tif",
+    "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25/Validation/F3.tif"
+  ],
+  "shape_tyx": [
+    1500,
+    490,
+    490
+  ],
+  "axis_semantics": {
+    "z": "t (time, dim0)",
+    "y": "y",
+    "x": "x"
+  },
+  "max_distance": 8,
+  "max_samples_per_stat": 500000,
+  "structure_sigma": 0.8,
+  "proxy_sigma": 0.8,
+  "fg_percentile": 75.0,
+  "frame_crop": null,
+  "seed": 3407,
+  "rows_total": 432,
+  "per_level": {
+    "F1": {
+      "noisy_path": "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25/Validation/F1.tif",
+      "rows": 144,
+      "gt_noise_std": 90.43868255615234
+    },
+    "F2": {
+      "noisy_path": "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25/Validation/F2.tif",
+      "rows": 144,
+      "gt_noise_std": 231.52188110351562
+    },
+    "F3": {
+      "noisy_path": "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25/Validation/F3.tif",
+      "rows": 144,
+      "gt_noise_std": 454.9181823730469
+    }
+  },
+  "note": "T4b 第一切片：GT 噪声源 pairability；不训练任何权重。"
+}

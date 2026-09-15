@@ -1,0 +1,61 @@
+{
+  "bins": [
+    {
+      "bin": 0,
+      "z_range": [
+        0,
+        570
+      ],
+      "foreground_psnr_db": 19.065663047697676,
+      "patch_count": 275
+    },
+    {
+      "bin": 1,
+      "z_range": [
+        627,
+        1140
+      ],
+      "foreground_psnr_db": 18.810775531156263,
+      "patch_count": 250
+    },
+    {
+      "bin": 2,
+      "z_range": [
+        1197,
+        1767
+      ],
+      "foreground_psnr_db": 19.01455776273754,
+      "patch_count": 275
+    },
+    {
+      "bin": 3,
+      "z_range": [
+        1824,
+        2337
+      ],
+      "foreground_psnr_db": 16.659738731294343,
+      "patch_count": 250
+    },
+    {
+      "bin": 4,
+      "z_range": [
+        2394,
+        2964
+      ],
+      "foreground_psnr_db": 18.60247137951925,
+      "patch_count": 275
+    }
+  ],
+  "overall_foreground_psnr_db": 18.45688220215104,
+  "patch_count": 1325,
+  "z_range_global": [
+    0,
+    2964
+  ],
+  "bins_count": 5,
+  "stride": [
+    2,
+    2,
+    2
+  ]
+}

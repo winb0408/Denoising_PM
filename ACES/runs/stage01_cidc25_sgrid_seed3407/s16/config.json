@@ -1,0 +1,44 @@
+{
+  "seed": 3407,
+  "run_dir": "/data3/wjb/Denoising_PM/ACES/runs/stage01_cidc25_sgrid_seed3407",
+  "data_root": "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25",
+  "training": {
+    "epochs": 20,
+    "max_batches_per_epoch": 100,
+    "eval_every_epochs": 5,
+    "z_patch": 64,
+    "w_patch": 128,
+    "h_patch": 128,
+    "overlap": 0.1,
+    "batch_size": 1,
+    "num_workers": 2,
+    "lr": 0.0001,
+    "base_features": 16,
+    "n_groups": 4,
+    "weight_reg": 0.0001,
+    "clip_gradients": 100.0,
+    "bg_reg_weight": 0.0,
+    "bg_percentile": 25.0
+  },
+  "evaluation": {
+    "patch_count": 18,
+    "foreground_percentile": 75.0,
+    "selection_level": "F2",
+    "mid_patch_count": 12
+  },
+  "analysis": {
+    "shifts": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "weight_set": "best",
+    "nmse_threshold": 0.02,
+    "n_tiles": 8
+  },
+  "shift": 16,
+  "axis": "spatial"
+}

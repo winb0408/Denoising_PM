@@ -1,0 +1,191 @@
+{
+  "event": "qmask_stage2_mode_complete",
+  "mode": "iso3d",
+  "mode_dir": "/data3/wjb/Denoising_PM/ACES/runs/stage02_nf_matrix4_seed3407/iso3d",
+  "checkpoint": "/data3/wjb/Denoising_PM/ACES/runs/stage02_nf_matrix4_seed3407/iso3d/checkpoints/iso3d_final.pth",
+  "train_batches": 8000,
+  "elapsed_seconds": 12365.896395223215,
+  "final_loss": 0.8622623682022095,
+  "eval_regions": {
+    "all": {
+      "mse": 2748.1956143985494,
+      "mae": 26.370366524033873,
+      "psnr_db": 29.477488450736775,
+      "pred_mean": 130.29530686540804,
+      "target_mean": 141.6615689524915,
+      "pred_std": 69.0636608547769,
+      "target_std": 71.04581111037695,
+      "n_voxels": 18874368
+    },
+    "foreground": {
+      "mse": 1858.819922779724,
+      "mae": 23.248601884936996,
+      "psnr_db": 21.645671634239754,
+      "pred_mean": 115.60295900126805,
+      "target_mean": 126.38893330912144,
+      "pred_std": 55.45750084597066,
+      "target_std": 48.07590787718993,
+      "n_voxels": 2898432
+    },
+    "background": {
+      "mse": 2909.5504774006386,
+      "mae": 26.93673224598136,
+      "psnr_db": 29.59288538296251,
+      "pred_mean": 132.960864063719,
+      "target_mean": 144.43240478164634,
+      "pred_std": 70.90738864278832,
+      "target_std": 74.12104353107875,
+      "n_voxels": 15975936
+    }
+  },
+  "eval_regions_aligned": {
+    "all": {
+      "mse": 2667.2676885591322,
+      "mae": 26.919889181047136,
+      "psnr_db": 29.325968163937986,
+      "pred_mean": 130.62552814803914,
+      "target_mean": 140.91908830963075,
+      "pred_std": 67.60886290162584,
+      "target_std": 69.90564766105949,
+      "n_voxels": 2359296
+    },
+    "foreground": {
+      "mse": 1818.9609627721845,
+      "mae": 23.305753744300556,
+      "psnr_db": 20.784895576329482,
+      "pred_mean": 116.42572828152353,
+      "target_mean": 125.99843253144539,
+      "pred_std": 53.19362957103729,
+      "target_std": 47.338314688611575,
+      "n_voxels": 372096
+    },
+    "background": {
+      "mse": 2826.110049387645,
+      "mae": 27.596622946884324,
+      "psnr_db": 29.05326166342455,
+      "pred_mean": 133.28438922449396,
+      "target_mean": 143.71292704374895,
+      "pred_std": 69.63471365705112,
+      "target_std": 73.02561358744896,
+      "n_voxels": 1987200
+    }
+  },
+  "aligned_stride": [
+    2,
+    2,
+    2
+  ],
+  "depth_binned": {
+    "bins": [
+      {
+        "bin": 0,
+        "z_range": [
+          0,
+          570
+        ],
+        "foreground_psnr_db": 19.03991825918464,
+        "patch_count": 275
+      },
+      {
+        "bin": 1,
+        "z_range": [
+          627,
+          1140
+        ],
+        "foreground_psnr_db": 18.575597474638432,
+        "patch_count": 250
+      },
+      {
+        "bin": 2,
+        "z_range": [
+          1197,
+          1767
+        ],
+        "foreground_psnr_db": 18.807237698396488,
+        "patch_count": 275
+      },
+      {
+        "bin": 3,
+        "z_range": [
+          1824,
+          2337
+        ],
+        "foreground_psnr_db": 16.436372278444406,
+        "patch_count": 250
+      },
+      {
+        "bin": 4,
+        "z_range": [
+          2394,
+          2964
+        ],
+        "foreground_psnr_db": 18.325685087642245,
+        "patch_count": 275
+      }
+    ],
+    "overall_foreground_psnr_db": 18.26454620808086,
+    "patch_count": 1325,
+    "z_range_global": [
+      0,
+      2964
+    ],
+    "bins_count": 5,
+    "stride": [
+      2,
+      2,
+      2
+    ]
+  },
+  "best_epoch": 70,
+  "best_fg_psnr_db": 23.019354427452082,
+  "eval_curve": [
+    {
+      "epoch": 10,
+      "batch": 1000,
+      "fg_psnr_db": 19.287091712225227,
+      "all_psnr_db": 27.859273538005578
+    },
+    {
+      "epoch": 20,
+      "batch": 2000,
+      "fg_psnr_db": 20.156200476334863,
+      "all_psnr_db": 28.555553558707825
+    },
+    {
+      "epoch": 30,
+      "batch": 3000,
+      "fg_psnr_db": 20.987493258229833,
+      "all_psnr_db": 28.799850669027055
+    },
+    {
+      "epoch": 40,
+      "batch": 4000,
+      "fg_psnr_db": 22.580575396242843,
+      "all_psnr_db": 29.584901486040216
+    },
+    {
+      "epoch": 50,
+      "batch": 5000,
+      "fg_psnr_db": 21.16630935848562,
+      "all_psnr_db": 29.45964336114043
+    },
+    {
+      "epoch": 60,
+      "batch": 6000,
+      "fg_psnr_db": 22.47915720219938,
+      "all_psnr_db": 29.41569080364637
+    },
+    {
+      "epoch": 70,
+      "batch": 7000,
+      "fg_psnr_db": 23.019354427452082,
+      "all_psnr_db": 30.16863903478875
+    },
+    {
+      "epoch": 80,
+      "batch": 8000,
+      "fg_psnr_db": 21.645671634239754,
+      "all_psnr_db": 29.477488450736775
+    }
+  ]
+}
