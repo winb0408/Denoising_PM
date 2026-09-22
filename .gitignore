@@ -10,3 +10,7 @@ __pycache__/
 *.pyc
 sampler_metadata.json
 runs_archive/
+
+# 例外：ACES/example 下的示例原始体数据（用户指定入库，勿删）
+!ACES/example/
+!ACES/example/*.tif
