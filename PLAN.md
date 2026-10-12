@@ -1,140 +1,260 @@
-# PLAN.md — ACES 项目方案文档（固定版）
+# PLAN.md — Denoising_PM 深层有效信号恢复研究方案（现行版）
 
-> **文档定位**：本项目的**唯一现行方案文档**。日后方法/协议修正时直接修改本文档并在文末变更记录中登记，不再新开并行方案文件。
-> **来源**：由 `ACES_Project_Correction_Execution_Plan_v1_20260922.md`（ChatGPT 生成）经 Claude 代码级审查修正后固定（2026-09-22）。审查对原方案的修正以 ⚠️ 标注。
-> **配套**：实验流水见 `PROJECT_LOG.md`；验收状态见 `project_progress_status.md`。
+> **文档定位**：本项目的**唯一现行研究与执行方案**。方案修订直接修改本文档并登记文末变更记录，不再增加并行现行方案。
+> **版本/日期**：成像质量主线重构版，2026-10-12（Asia/Shanghai）。
+> **研究终点**：算法处理后，深层有效结构/神经元信号更可辨、背景噪声更弱，并保持真实结构与信号。
+> **配套**：验收状态见 `project_progress_status.md`；逐次实验流水见 `PROJECT_LOG.md`；重构前两份文档原样保存在 `docs/archive/2026-10-12_pre_imaging_quality_replan/`。
 
 ---
 
-## 1. 研究问题与主线
+## 1. 研究目标与主线思路
 
-**问题升级**：原 ACES 问"三个方向各给多大采样半径"（`r_a = max{d: Q_a(d)>τ}`，已被实验证伪）。现问：
+### 1.1 核心研究问题
 
-> **对于各向异性 2P/3P 体成像，在没有 clean ground truth 的情况下，能否从数据本身估计不同 observation pairs 的风险与训练效用，并据此自动形成随方向、深度、局部信号质量自适应的采样策略？**
+> **在缺少无噪声真值的 2P/3P 荧光成像中，能否利用自监督去噪提高深层弱信号的有效可辨性，同时减弱背景噪声、保留神经元与精细结构，并避免过平滑或伪结构？**
 
-主线一句话：
+“增强”主要指真实信号的可辨性、对比和可检测性提高，**不要求绝对荧光强度增大**。亮度缩放、背景被置零、PSNR 单独变高均不能代表成功。2P/3P 是研究适用范围；论文实际主张必须按已核实成像模态和已完成的数据验证限定，不能仅由激发波长推断模态。
 
+### 1.2 主线与方法层级
+
+```text
+真实低信号图像 → 可靠自监督配对 → 去噪与弱信号恢复
+              → 独立参考/固定 ROI 评估 → 深层结构更可辨 + 背景减弱 + 保真
 ```
-Data → Risk(R_N,R_S,R_I) → Utility(micro-probe) → Policy(π(Γ|q)) → Denoising → 深层信号 SNR/CNR/SBR 恢复
-```
 
-方法名（暂定，不锁死）：**Pair-Utility Calibrated Adaptive Sampling（配对效用校准自适应采样）**。
-
-## 2. 三层创新
-
-1. **Pair-risk 分解**：把单一 Q=N×S 分解为噪声依赖风险 R_N、结构错配风险 R_S、恒等捷径风险 R_I——三者是不同性质的问题，不可压缩成一个 scalar。Q 降级为 legacy 诊断。
-2. **Pair utility 校准**：static validity ≠ optimization utility。用极低预算 micro-probe（固定全部训练变量，只换 sampling family）的统计量估计实际训练效用 U_probe，并用 development laboratory 的 oracle utility 验证其预测力。
-3. **Signal-aware 自适应采样**：π(Γ|q)（q = 深度/局部信号/噪声/各向异性状态），目标是深层低信号区域的 SNR/CNR/SBR 与可检测性，不是平均 PSNR。
-
-## 3. 核心对象定义
-
-- **Candidate offset** Δ=(dz,dy,dx)，同时记录 voxel 与 μm 两套单位（spacing 来自 metadata；3P 的 dz=4 μm/组为推导值，论文前须再确认，不得包装成原始标定）。
-- **Sampling family** Γ={δ1..δ4}：4 个视图 offset 映射到同一 coarse grid；family 风险 = pairwise offsets 的 mean 与 worst 两种聚合。这样统一 VALID / SN2N-like / QMask / 新 adaptive family。
-- **风险**：
-  - R_N = |corr(N̂(r), N̂(r+Δ))|（repeat 残差；无 repeat 时用 proxy 并显式标记 noise_source）+ 可选方差一致性项；
-  - R_S = 0.5·(1−ρ_LF) + 0.3·(1−SSIM_local) + 0.2·(1−ρ_grad)（权重为初始值，Phase 1 做 sensitivity）；
-  - R_I = exp(−nMSE(Δ)/τ_I) · max(ρ_Y(Δ),0)；物理预期：too close→捷径↑，中间→有效区，too far→结构风险↑（U 形）。
-- **R_base = λ_N R_N + λ_S R_S + λ_I R_I**（初始 0.35/0.40/0.25）仅作诊断分数，不是 utility。
-- **U_probe(Γ) = Σ w_j φ_j(Γ)**，φ 为 micro-probe 训练统计量的 robust z-score 组合（初始权重 +0.25 邻域损失改善 / +0.15 恒等风险降低 / +0.15 残差独立 / +0.20 梯度保持 / +0.10 跨视图一致 / +0.05 稳定性 / +0.10 惩罚捷径）。所有权重是实验初始值，不进论文定稿。**【2026-09-25 修订】**Exp C 证明上述固定符号先验不成立（ρ=−0.31）；U_probe 定义改为 **v2：regime-conditioned 校准权重**——w_j 在目标 regime 开发数据上拟合（候选极简特征集 {loss_neighbor_mean, cross_view_consistency}，3P 单 seed 上 LOO ρ=+0.82，3-seed 均值上可分对准确率 12/13、top/bottom AUC=0.89），**权重不跨 regime 迁移**（同一特征在 3P 空间与 CIDC25 时间轴符号相反，原理性约束）。3-seed 均值复拟合权重 w=[+1.45, +4.47]。详见 §11 变更记录。
-- **U_oracle**：仅在拥有参考的开发数据上计算（PSNR/CNR/深区增益），只用于验证 U_probe 预测力，**不得作为部署期 policy selector**。
-- **Policy**：先 hard（argmax U），后 soft（softmax(U/T) + R_N/R_S 安全截断）；patch 级决策，不做 voxel 级；不做在线 RL/meta-learning（future）。
-
-## 4. 数据策略
-
-| 数据 | 定位 |
-|---|---|
-| 3P 9-repeat 栈 | pair-risk / utility **开发实验室**（真噪声 + 结构参考 + oracle） |
-| CIDC25 | H3 已证伪的机制战场；utility 机制验证（rgrid/sgrid 协议复用） |
-| Neurofinder [T,Y,X] | 时间冗余 / 机制 benchmark；**T 不是物理深度，禁止深度解释** |
-| 真实 green/red/obj（AVG25） | 真实应用验证：deep SNR(z)/CNR(z)/SBR(z) + 结构保持 |
-
-⚠️ **修正 1（原方案 §24 不可执行）**：~~原始 25 帧数据不在库中，只有 25 帧平均后的 AVG 体数据，奇偶帧 split 暂不可行。~~ **【前置条件已满足（2026-10-09 用户确认；文件 09-23 已入库并被 M1 A3-1b 使用）】** `Data/Private/thy1-yfp-{1300nm-green,1100nm-red}-raw.tif` = [6025,256,256] = 241 z × 25 repeats（plane-major，帧均值与 AVG 逐层 corr=1.0）。处置（按原第二分支执行）：
-- 先查运动/漂移/bleaching，必要时配准，再 A={1,3,5..} / B={2,4,6..} 独立 split，AVG25 只做 validation/最终图参考；
-- 该数据即 green/red AVG 对应的原始 25 帧，是 M3 真实数据 deep-signal 验证（Priority 6）的主战场。
-
-预处理协议：flat-field/无效面检查 → 配准（如需）→ 独立 split → 归一化 metadata → ROI/背景定义 → patch 提取 → Calibration/Validation/Blind Test。obj 的 1.8 mm 以下伪影显式记录在 metadata（valid_depth_um + excluded_artifact_reason），不写死在模型代码。
-
-## 5. 评估协议（P0，硬性）
-
-- **P0-1 语义**：静态体 [Z,Y,X]、动态 [T,Y,X]、体时序 [T,Z,Y,X]；代码 metadata 必须带 axis_names。
-- **P0-2**：d_min/d_max 降级为 risk field 辅助特征，不再伪装 distance-aware sampler。
-- **P0-3**：Q=N×S 不再作任何 decision score。
-- **P0-4 隔离**：Calibration → Validation → checkpoint/threshold/policy 选择 → Blind Test。Blind Test 禁止参与一切选择（offset/threshold/geometry/checkpoint/temperature）。
-- **P0-5 指标**（intensity domain）：SNR=(μS−μB)/(σB+ε)；CNR=|μS−μB|/√(σS²+σB²)+ε；SBR=μS/(μB+ε)；dB 换算在 Methods 中写明。ROI 规则预先固定：signal ROI 来自独立 annotation/稳定分割，background ROI 用邻接环/固定解剖区/已知高背景区，红绿通道分别建立——**不得用"亮的地方"当 signal 再证明 SNR 提升**。
-- **P0-6 SSIM**：正式主表只报 full SSIM；fg/bg 行不再携带重复的全 patch 值。
-- **P0-7 checkpoint**：统一 Validation-selected best，结果必须记录 selected_epoch / selection_metric / selection_dataset / selection_protocol。
-- **训练协议**：max 30–50 ep、每 2–5 ep 验证、patience 5–10；early stopping 只由 validation 决定。主表只保留 training-resolution-aligned + validation-selected 一个口径，full-resolution 入 supplementary。
-- **统计**：正式比较 ≥3 seeds，mean±SD（+95%CI）；统计单位（volume/animal/field/patch）显式声明，防 pseudo-replication。
-
-## 6. 实验矩阵与 Gate
-
-| Gate | 实验 | 通过判据 |
+| 层级 | 内容 | 在项目中的位置 |
 |---|---|---|
-| P0→P1 | 仓库清理（本节 §5 全项） | 协议统一、语义统一、QMask/legacy 隔离、test 不参与选择 |
-| P1→P2 | **Exp B** risk field（3P + CIDC25 + nf） | R_N/R_S/R_I 规律不同；Q 无法解释；至少一个真实数据集有明显 U 形 trade-off |
-| P2→P3 | **Exp C** micro-probe vs oracle | Spearman(U_probe, U_oracle) 显著 > Spearman(Q, U_oracle)；否则回炉 utility 定义，禁止进 adaptive。**【2026-09-25 判定：v1 不通过（ρ=−0.31 ns）→ 已回炉；v2（regime-conditioned）初判 LOO ρ=+0.82，待 3-seed 复核后重判】【2026-10-07 终判：有条件通过】** 3-seed 均值 oracle（10 family 全量）上：朴素 Spearman ρ=+0.467（p=0.174，不显著）——但噪声诊断表明该判据不可达：oracle 排序自身 seed 信度仅 ≈0.33（单 seed 间 ρ̄=+0.143），任何预测器对 3-seed 均值的相关上限 ≈0.58；45 对家族中仅 13 对统计可分（gap/noise>1.96），中段排序在 oracle 本身即不稳定。在可分对上 **LOO 方向准确率 12/13（p≈0.002）**、top3-vs-bottom3 判别 **LOO AUC=0.89**（adaptive 选择所需的核心能力）。判定：v2 对可靠可分的家族效用具真实预测力，M3 adaptive 以 top/bottom 判别为准入依据（非全排序）。待补：80ep 预算敏感性（运行中）、CIDC25 反向验证。 |
-| P3→P4 | **Exp D** adaptive-hard | Oracle Gap G_oracle 显著小于 fixed/QMask。**【2026-10-08 最终判定：校准 regime 内成立 + 跨预算迁移失效（均为证据）】** ①**20ep 校准 regime 内**：3P（dev=s3407 拟合权重、held-out s3408/3409 评估）adaptive 选 sn2n_xy_diag **gap=+0.039dB**（双 held-out seed 一致）vs fixed-QMask +0.473 / fixed-VALID +0.526（收窄 92%）；CIDC25（9 dt × 3 seed，权重 3-seed 均值拟合）adaptive gap **+1.82±0.91** vs nearest(dt=1) **+3.45±1.51**（点估计收窄 47%，配对 t n=3 p=0.31）。②**20ep 校准 → 80ep 生产迁移失效**：80ep 3-seed 下 adaptive 臂 sn2n_xy_diag 7.39±0.18 在 4 关键家族中**垫底**（qmask_xy 7.68±0.07 最优，配对差 +0.296，3/3 seed 为正）；机制为预算饱和不对称（sn2n 20ep 已收敛 Δ+0.02dB，qmask/valid 慢热各 +0.5dB）。**结论：U_probe 校准是（数据 regime × 预算 regime）双条件函数**——与 CIDC25 反向验证共同构成 regime-conditioning 完整证据（H4）；M3 生产 pipeline 设计约束：目标预算 B 的部署须在 B 下做 oracle 校准。附：CIDC25 dt=8「内点峰」seed 脆弱（s3409 后期发散，std 5.21dB），dt=64 最稳最优（29.34±0.50）。 |
-| P4→P5 | **Exp E** adaptive-soft | seed 方差/策略熵/鲁棒性有收益，否则保留 hard |
-| P5→P6 | **Exp F** depth/signal-conditioned | ΔSNR_deep/ΔCNR_deep/ΔSBR_deep > 0 且结构不退化 |
-| 应用 | **Exp G** 真实 2P/3P | 深层 SNR(z)/CNR(z)/SBR(z) + neuron detectability（Raw/AVG25/VALID/QMask/Proposed；各方法遵守各自数据假设） |
+| 最终目标 | 深层成像质量与有效结构/神经元可检测性改善 | 所有取舍的最终依据 |
+| 核心方法 | 面向弱信号恢复的自监督去噪 | 必须先形成可运行、可评价的最小闭环 |
+| 方法基础 | 合理配对、QMask/共位相位分裂、各向异性处理、统一推理 | 用于构造可靠训练数据和保留结构 |
+| 可选增强 | 深度/信号条件策略、risk field、micro-probe、adaptive hard/soft | 只有带来额外成像收益才进入最终方法 |
+| 机制解释 | pairability 与 utility 的差异、跨数据/预算失效、负结果 | 解释适用边界，不作为成像成功的替代指标 |
 
-**H1–H6 假设**：H1 各向异性冗余存在（已有数据支持）；H2 半径不是充分表示（ellipsoid/rgrid 证据）；H3 **pair similarity ≠ training utility（核心，已获时间轴+空间轴双闭环初步证据）**；H4 风险分解改善 utility 预测；H5 utility 采样逼近 oracle；H6 depth-conditioned policy 改善深层可检测性。
+**执行顺序**：先证明图像变好，再解释配对为何有用，最后研究能否自动选择。固定策略得到可靠成像改善后即可推进应用验证；不必等待风险分解或效用预测“通过”才做真实成像。
 
-## 7. 代码架构（⚠️ 修正 2：增量式，不做一次性大迁移）
+### 1.3 明确边界
 
-新增两个包，现有 `ACES/qmask/`、`ACES/aces/` 原地保留为 baseline/legacy：
+- 第一版以静态体数据的结构恢复为主；`[T,Y,X]` 的时间轴不解释为深度。静态 repeat 不等于神经活动时序。
+- 神经元胞体/树突可检测性属于结构应用；钙瞬变、事件时序、功能保真只在有合适动态数据与独立验证时开展。
+- 不以完整自动化、oracle gap、效用排名或风险曲线为论文核心终点；不预设 adaptive 必然优于固定策略。
+- 不同时扩张网络、损失、采样和策略。每个新增模块必须说明它解决了哪一种实际成像不足。
 
+## 2. 候选创新点与验证要求
+
+> 以下是**候选贡献**，不是已经证明的原创性或已完成的论文结论。具体文献定位在方法冻结后核对。
+
+| 编号 | 候选创新 | 必需证据 | 不足以证明的证据 |
+|---|---|---|---|
+| IC1（核心候选） | 面向深层弱信号的自监督恢复方案，将抑噪与真实结构保持共同约束 | 独立测试中优于输入及合理基线；深层检测/结构指标与固定 ROI 对比改善，背景减弱且无伪结构 | 仅换论文叙事、仅平均 PSNR 或亮度提高 |
+| IC2（方法基础） | 利用各向异性空间冗余的配对/共位相位分裂，提高弱结构学习质量 | 同骨干、同损失、同预算只改配对的消融，收益落实到最终图像 | 静态相似度高、某一次 family 排名最优 |
+| IC3（可选增强） | 深度/可观测信号质量条件化的简单恢复策略 | 相对**验证集选出的最佳固定策略**有额外深层收益、无浅层明显退化；计入校准与推理成本 | 测试集逐深度挑赢家后拼接；oracle 上界 |
+| IC4（支撑发现） | 配对统计与最终恢复效用存在数据/预算依赖，明确自动选择边界 | 留出数据/预算上的复核和最终图像对照；失败例完整保留 | 将 7 家族单 seed 排序或拟合相关性写成普遍定律 |
+
+优先验证 IC1/IC2；IC3 不成立则保留可靠固定方案；IC4 可作为 Discussion 或补充材料。任何自定义损失都只是候选，需要消融证明，不能将“深层”命名本身视为方法创新。
+
+## 3. 项目框架与代码复用
+
+| 模块 | 现有实现/证据 | 新方案中的职责 | 当前缺口 |
+|---|---|---|---|
+| 数据/配对 | `ACES/aces/`、`ACES/qmask/sampling.py`、`geometry.py` | 轴语义、配对构造、固定策略基线 | 统一数据与参考 split manifest |
+| 去噪训练 | `ACES/qmask/train.py`、`aces/train_stage2.py`、`calibration/oracle.py` | 最小自监督模型及同骨干消融 | oracle 仅适合探索；正式入口须支持隔离与 validation-selected checkpoint |
+| 评估 | `aces/evaluate_stage2.py`、`calibration/analyze_green_deepsignal.py` | 深层固定 ROI、独立参考、结构/背景联合评估 | 后者当前为输出分位数 ROI，须隔离为 legacy proxy |
+| 推理/图表 | `qmask/paperviz.py`、`calibration/render_deep_zoom.py` 等 | 统一尺度输出、论文图及 review 切块 | 统一窗宽、物理尺度、重叠融合与接缝检查 |
+| 可选分析 | `ACES/profiling/`、`ACES/calibration/` | 风险解释、效用校准、可选策略 | 不再强制串成所有实验的前置链 |
+| 后续增量接口 | 按需新增 `ACES/evaluation/`；策略有效后再增 `ACES/sampling/` | 固定协议和策略实现 | **规划项，不能记作已实现** |
+
+增量修改现有模块，不做一次性迁移。统一记录 `axis_names`、`spacing_um`、`family_id`、`offsets_voxel/um`、`input_frame_ids`、`reference_frame_ids`、`split_id`、`selected_epoch`、`selection_metric` 和 `selection_dataset`。核心管线可用固定 family 直接训练/推理，不依赖 risk/probe 文件。
+
+## 4. 数据、参考与隔离协议（G0，硬性）
+
+### 4.1 数据定位
+
+| 数据 | 当前已知资产/用途 | 新方案定位与限制 |
+|---|---|---|
+| green1300 raw/AVG25 | 历史记录：`[6025,256,256] = 241 Z × 25 repeats`，plane-major；7-family pilot JSON 已在库 | 深层弱信号主实验；正式运行前复核原始文件、成像模态、spacing 与来源 |
+| red1100 raw/AVG25 | 历史记录与 green 同组织格式，信号较强 | 通道鲁棒性/不过度处理对照；不强求高信噪通道增益 |
+| 3P 9-repeat 栈 | 配对/效用开发证据 | 开发与独立参考实验，按 manifest 重新隔离 |
+| obj_2mm AVG 体 | 当前只有平均体，无对应 repeat 原始帧 | 真实应用展示/伪影失败例；不能声称独立参考真值或重复帧抑噪定量 |
+| CIDC25 | 有已做时间/空间机制实验 | 基准与机制补充；训练通道更新权重，Validation 通道仅评估/模型选择，遵守数据条款 |
+| Neurofinder `[T,Y,X]` | 时间冗余 benchmark | 可选动态验证；T 不是 Z，不用于物理深度曲线 |
+
+历史路径 `/data3/wjb/Denoising_PM` 按日志迁移为 `/ssd1/wjb/Denoising_PM`；当前执行环境并无这些挂载。GitHub 快照的 JSON 可审阅，不能据此宣称原始数据、权重或训练环境已在当前机器复现。`ACES/example/` 示例不替代完整 repeat 数据。
+
+### 4.2 独立参考设计
+
+1. 先核查帧顺序、坏面、运动、漂移、bleaching、噪声相关性及伪影。配准/校正使用冻结流程，不用测试输出修正参考。
+2. 同一视野的 repeat 拆为互不重叠的 input/training 与 reference 帧集合。A/B 奇偶 split 是候选，只有噪声相关性体检通过才使用；奇偶编号本身不能保证独立。
+3. 主输入为声明帧数的低信号观测（优先单帧）。参考均值的任何帧**不得参与该样本输入或模型权重更新**；AVG25 含输入时仅作为探索/展示参考。
+4. 独立 repeat 均值仍是**含残余噪声的参考**，不是 clean GT。报告参考帧数、噪声底及参考不确定性；无参考数据不报“真值 PSNR”。
+5. 同一测试体跨多个输入 repeat 推理用于稳健性评估，所有这些输入都排除于对应参考；ROI 可来自独立参考/盲法标注，但不能用于选择方法。
+
+### 4.3 Development / Validation / Blind Test
+
+- 优先按 animal/volume/field 留出，再提 patch；各集合均覆盖需要研究的浅/中/深层。仅一个体时用不重叠空间区域并设防护带，保证训练/验证/测试 patch 完整支持域不相交；只能报告体内验证。
+- 划分、排除区、深度带、ROI、检测阈值与验收阈值先写入 manifest。不能随机切相邻重叠 patch 后声称独立泛化。
+- 模型、checkpoint、归一化统计、配对、策略、预算、损失系数由开发/验证集决定。Blind Test 只在协议冻结后使用。
+- 若研究同图自监督（transductive），明确允许用哪部分无标签测试观测训练，并与同设定基线比较；独立参考仍隔离。其结果单列，不混入严格留出泛化主表。
+- spacing 未确认时横轴使用 z index；物理深度、比例尺、FWHM 必须用核实后的标定。obj 无效深度/伪影作为 metadata 排除规则，不能看结果后删不利区。
+
+## 5. 成像质量评估与正式成功标准
+
+### 5.1 三条联合证据
+
+| 维度 | 最小必做指标/观察 | 成功方向 |
+|---|---|---|
+| 有效信号/结构恢复（主终点） | 独立标注胞体/树突检测的 precision/recall/F1 或结构连通性；固定 ROI 的 CNR 与线剖面 | 深层可检测性/结构可辨性提高；伪阳性不因去噪明显增加 |
+| 背景减弱（共同终点） | 固定背景 ROI 的残余 std/方差；跨独立输入 repeat 输出差分估计随机残余；背景均值/低频背景单独报告 | 随机背景噪声降低；不能以均值降低代替噪声降低 |
+| 保真（约束） | 信号-背景对比保留、树突连续性/断裂、线宽与峰值偏差、残差结构、伪结构与接缝 | 不显著抹除细结构、不造出胞体/分支、不压缩真实信号动态范围 |
+
+PSNR/full SSIM（独立参考）、SNR/SBR、归一化频谱与 Laplacian 高频 proxy 是辅助证据。高频变小可由平滑造成；SBR 比值保留不能单独排除过平滑；同数据两套评估排序一致属于一致性检查，不是独立重复实验。
+
+### 5.2 固定 ROI 与指标定义
+
+所有方法使用同一份 signal/background ROI，来自独立标注或独立参考的冻结分割；阈值在验证集确定，测试不重调。不得从每张输出的 top10%/bottom50% 重选前景/背景后比较。前景包含预先定义的弱信号和细结构，不能只选最亮区域。
+
+原始强度域、黑电平校正后定义：`SNR = (μS−μB)/(σB+ε)`；`CNR = |μS−μB|/(sqrt(σS²+σB²)+ε)`；`SBR = μS/(μB+ε)`。记录 ε、背景来源和统计方式；μB 接近零/非正时 SBR 标记不适用。旧脚本名为 CNR 的 `(μS−μB)/σB` 与此不同，不混表。需要 dB 时明示振幅比 `20 log10`，PSNR 用 `10 log10(data_range²/MSE)`。
+
+PSNR 的 data_range 在同一比较单元对所有方法保持一致；主表使用冻结口径，逐 patch 分位范围的历史 PSNR 单列。FWHM 仅在适合的独立结构/标定对象上测量，不能凭更窄线宽宣称分辨率提高。频谱按预先选定的 DC 或总功率方式归一化并标注噪声底，禁止用未归一化功率证明细节恢复。
+
+### 5.3 Gate 与统计
+
+- 在 G0 冻结一个深层主终点（优先独立标注检测 F1/固定假阳性率下 recall）、一个背景噪声终点和结构非劣界 δ；样本不足以可靠标注时以固定 ROI CNR 为预设替代主终点，论文不能据此升级为神经元检测结论。
+- δ 及最小有意义增益根据独立参考重复性/验证集标注一致性确定，记录具体数值后才能开始正式盲测。不能看到测试结果后修改成功标准。
+- 相对输入：主终点改善、背景噪声降低、结构满足非劣界且伪阳性受控，三项联合成立才记为“成像闭环通过”。任一不足均报告局部收益或失败。
+- 相对方法基线：在相同输入/设定下，至少一个预设关键终点超过最强合理基线，另外两个不退化；否则只能证明可用，不能宣称方法优势。adaptive 的 Gate 单独与验证选定的最佳固定策略比较。
+- 正式训练 ≥3 seeds（3407/3408/3409），但 seeds、patch 与 repeat 不是独立生物样本。报告 animal/volume/field 数，采用独立单位的配对统计/分层 bootstrap、效应量与 95% CI，seed mean±SD 分开列。独立样本不足时仅作探索，不制造显著性。
+
+## 6. 实验矩阵与公平比较
+
+| 实验 | 要回答的问题 | 最小设计 | 论文位置 |
+|---|---|---|---|
+| E0 协议与体检 | 参考独立、ROI 可复用、深度语义正确吗？ | split/ROI manifest、相关噪声、排除区、归一化检查 | Methods + Table S1 |
+| E1 成像核心对比 | 去噪后深层结构更可辨且背景更弱吗？ | 同输入 Raw、经典滤波（Gaussian/Wiener 中预选一种）、原 VALID、原 SN2N、核心方案；独立参考均值单列 | Fig. 2–3 + Table 1 |
+| E2 配对贡献消融 | 收益来自合理配对还是其他训练改变？ | 同 backbone/loss/预算，固定 VALID-like、SN2N-like、QMask 配对；先少量代表 family | Fig. 4 的方法贡献部分 |
+| E3 深度/质量条件增强（可选） | 简单条件策略比最佳固定方案有额外成像收益吗？ | 固定赢家、预设深度分带、部署可观测质量条件；有收益再加入 probe-adaptive | Fig. 4 的可选策略部分 |
+| E4 保真与失败边界 | 背景干净是否以丢结构或造结构为代价？ | 弱树突/胞体线剖面、残差、背景假阳性、接缝、伪影区；等噪声或等结构保留的经典滤波对照 | Fig. 3/5 + Supplement |
+| E5 跨数据应用 | 收益在其他体/通道/模态复现吗？ | green 主战场，red 高 SNR 对照、独立 3P 体；obj 仅无参考展示；有合适 2P 数据再验证 2P | Fig. 5 + Table S2 |
+| E6 机制解释（按需） | 什么情况下统计/效用会失败？ | 复用 risk、micro-probe、CIDC25 及预算迁移结果；只补最终方法需要的实验 | Supplement + Discussion |
+| E7 功能验证（扩展） | 动态信号时序/幅度是否保持？ | 有独立动态数据后固定 ROI 检测，事件时序、幅度、误检；禁止时间平滑伪增 SNR | 可选 Fig. 6，未完成则不作功能主张 |
+
+**两类表不能混用**：同骨干只换采样用于归因；原 VALID/SN2N 各自管线用于实际方法比较。`sn2n_xy_diag` family 不是原 SN2N 的完整复现，`valid_corners` family 也不能替代原 VALID 行。统一输入帧数、输出分辨率、评估区域和参考；附录补各方法原推荐设置与预算敏感性。
+
+多帧平均同时改变采集成本，只作参考或单列“等采集成本”实验，不与单帧输入去噪直接宣称同条件优越。正式比较同时报告参数量、训练步数/时长、校准额外成本、推理时长/显存；下采样视图导致算力不同须披露，必要时补等耗时对照。
+
+## 7. 分阶段执行与验收（替代旧 M1/M2/M3 必经链）
+
+| 阶段 | 优先级 | 执行内容 | 交付物 | 验收/停止条件 |
+|---|---|---|---|---|
+| S0 协议冻结 | P0 | 数据体检；split/固定 ROI/深度带；明确主终点和 δ；修正评估口径 | E0 manifest、协议、一个完整评估样例 | G0：无输入-参考泄漏、无选模-测试混用、指标可复算；否则不得做正式盲测 |
+| S1 最小成像闭环 | P1 | green 上固定核心策略；Raw+经典滤波+现有去噪基线；先定性后定量 | E1 pilot、深层 zoom、联合指标、失败例 | G1：初步成像改善且无明显塌缩/伪结构；仅探索通过，不等于正式验收 |
+| S2 方法冻结与消融 | P2 | 只换代表配对；如结构仍损失再研究一种温和正则/损失调整；验证选定预算和 checkpoint | E2、冻结配置、候选最终方法 | G2：配对贡献可复核；新增损失无收益即移除，不继续堆模块 |
+| S3 正式成像验证 | P3（必须） | 冻结 S2 后，≥3 seeds、独立测试、多输入 repeat 稳健性、足够独立数据 | E1/E4 正式表、Fig. 2–3、统计与误检检查 | G3：§5 三条联合证据通过；样本或标注不足则停留探索结论 |
+| S4 简单条件增强 | P4（可选，可在开发集与 S3 准备交叉推进） | 先预设分带/可观测质量策略；再按需要 probe/adaptive；预算内校准 | E3 + Fig. 4、成本表、留出策略评估 | G4：相对最佳固定策略有额外深层收益且无明显整体退化；否则固定策略作为最终方法 |
+| S5 应用与论文收口 | P5 | 跨体/通道/模态验证、失败边界、统一绘图与复算 | E5、Fig. 5、Table 1/S1/S2、论文结果提纲 | G5：所有主张可追溯至正式证据；缺失模态/功能实验则收窄适用范围 |
+
+### S0–S1：立即执行的具体任务
+
+1. 新建 `split_manifest.json`：输入/训练/参考帧 ID、development/validation/test 区域和独立单位、轴/spacing、坏面、原始文件校验信息。
+2. 建立 `roi_manifest.json`：胞体/树突/背景 ROI、盲标注规则、固定检测阈值、深度分层、主终点、δ 与来源。
+3. 将 `analyze_green_deepsignal.py` 的分位数 ROI 结果明确标为 legacy；增加独立参考与固定 ROI 评估接口。验证小样例只用开发数据。
+4. 正式训练入口补验证集评估与 checkpoint selection；探索 oracle 的 final checkpoint 不能改名冒充 validation-selected best。
+5. 在开发/验证集先比较 `qmask_xy` 与 `sn2n_xy_diag` 两个代表固定方案及必要对照，避免重开 7-family 全矩阵。前者/后者的历史排名只用于候选提名，不能决定测试赢家。
+6. 为 E1 建立 Raw→输出→独立参考的同位置浅/中/深视图、噪声/结构联合图和残差。若发现抹除结构，先处理问题再开展策略自动化。
+
+### S2–S4：方法与策略约束
+
+- 第一轮固定网络、损失、初始化/seed、原始 patch 池、训练步数与归一化，仅换 sampling。不同 family 的 stride/视图分辨率必须记录并统一完整分辨率推理。
+- 正式预算由验证学习曲线决定，设置统一最大步数、验证频率和 early stopping；20ep/80ep 是历史探索预算，不再直接代表新方案生产预算。
+- 若要保留细节，先检查 Hessian/一致性正则强度、patch 支持及推理接缝；历史 B1 可作候选，B2/B3 无收益或发散不默认复启。新损失不得使用测试参考或由输出亮度循环定义前景。
+- 深度带由物理深度/元数据预定义；质量条件仅使用部署可观测输入。验证选择的分带策略冻结后再测试，带间输出融合与接缝/色阶连续性须检查。
+- risk/probe 仅作候选筛选或解释；oracle 只用于开发诊断/上界。所有权重在 development 拟合、validation 选择；数据、backbone 或预算变化需重新验证，不能借用跨 regime 旧权重。
+- 若两个独立配置的开发/验证复核均无超过预设最小成像收益的增强，停止该模块。降低 oracle gap 或提高排名相关性不能推翻成像失败判定。
+
+## 8. 预期论文结构与图表规划（实验必须按此组织）
+
+### 8.1 Results 的叙事顺序
+
+1. **核心方案与数据/独立验证设置**：说明为何面向深层弱结构，展示实际方法而非全部探索路线。
+2. **真实深层成像改善**：全视野和 zoom 展示结构可辨、背景减弱；按深度定量与基线公平比较。
+3. **结构/神经元可检测性与保真**：检测、线剖面、残差、伪阳性，排除单纯平滑解释。
+4. **关键配对消融及可选条件策略**：只保留对最终恢复有效的模块；不成立的 adaptive 放边界分析。
+5. **跨数据应用和失败边界**：其他体/通道/模态；无证据的功能或 2P 主张删除。
+
+Discussion 讨论独立参考的不完美、样本范围、signal/background 权衡、跨数据/预算失效及适用条件。风险三分解和 micro-probe 不是必须逐章写入主文的结果。
+
+### 8.2 主图与主表
+
+| 图表 ID | 内容/面板要求 | 数据/阶段 | 关键验收 |
+|---|---|---|---|
+| Fig. 1 | 最终方法流程；训练配对示意；输入/参考隔离与验证设置 | E0/S2 | 图与最终代码一致；可选失败模块不画成必要部件 |
+| Fig. 2 | 浅/中/深同位置：Raw、经典滤波、原 VALID、原 SN2N、最终方法、独立参考；深层结构 zoom | E1/S3 | 每行统一窗宽/比例尺；常规区域+困难弱信号区域，选择规则先固定 |
+| Fig. 3 | 深层主终点与背景噪声 vs depth；固定 ROI CNR；检测/结构保真、线剖面或残差子图 | E1/E4/S3 | 展示独立单位、CI、效应量；同时呈现抑噪和结构保留，不只报 PSNR |
+| Fig. 4 | 同骨干配对消融；若通过 G4 再加最佳固定 vs 条件策略与开销 | E2/E3/S2/S4 | 方法消融和实际方法表分开；不展示测试 oracle 选择作为部署结果 |
+| Fig. 5 | 跨体/通道/模态的代表成像、定量、失败例/伪影区 | E5/S5 | 高 SNR 通道不强求提升；无参考示例标注清楚 |
+| Table 1 | 按数据/深度的正式成像质量、检测/结构、背景及成本比较 | S3/S5 | 逐项注明参考、输入帧数、样本量、seed、checkpoint 协议 |
+| Fig. 6（扩展） | 动态神经元功能信号的事件、幅度、时序/误检 | E7 | 没有独立动态验证则删除此图和对应结论 |
+
+### 8.3 补充材料（按需要，避免再堆实验）
+
+| ID | 内容 |
+|---|---|
+| Table S1 | 数据资产、模态、spacing、原始格式、帧 split、ROI/样本、排除规则和参数 |
+| Table S2 | 各方法配置、预算/分辨率、公平性、跨数据迁移设定、校准与推理成本 |
+| Fig. S1–S2 | repeat 体检/相关噪声、独立参考噪声底、split/ROI 审计、额外随机区域 |
+| Fig. S3–S4 | 参数/正则/预算敏感性、完整 seed 结果、接缝与结构残差、失败案例 |
+| Fig. S5–S6（可选） | risk/probe 的排名与跨 regime 失败、CIDC25/Neurofinder 机制结果；旧负结果复用 |
+
+论文主图数量可以合并，但“真实成像效果→结构保真→方法贡献→应用边界”的顺序保持。只做服务该证据链的新增实验。
+
+## 9. 实验、绘图与证据落盘要求（后续执行必须遵守）
+
+- **先定性再定量**：按 `CLAUDE.md`，大图先生成 ≤1200 px、≤3.5 MB 的 review 切块；深层细节单独高分辨 zoom。定性发现塌缩/伪影必须记录，不能靠平均指标覆盖。
+- **图像可比**：同 ROI/方向/尺度、同一比较行共用冻结的 intensity window、相同 cmap；不逐方法自动拉伸。展示以灰度为主，统一伪彩可补充，附 colorbar、物理尺度/轴信息。窗宽与 ROI 选择不看方法赢家。
+- **深度曲线**：主图只保留少数关键方法和参考；展示单位级散点/配对线及 CI，完整 family 留补充。物理标定未确认不标 μm/mm。
+- **结构与残差**：主展示至少包含普通深层区域、困难弱信号/细树突和背景区域；记录位置及选择规则。残差若含真实枝条/胞体轮廓，标记信号损失；额外结构须对独立参考核查。
+- **格式**：曲线/表格输出 PDF/SVG 与 ≥300 dpi PNG；图像面板保留原像素数据和窗宽；保存逐样本 CSV/JSON。图中文字在论文尺寸可读，预览不能取代原分辨率审核。
+- **复算**：统一绘图入口读取冻结 metrics/manifest，不在绘图脚本里重选 family、阈值或 checkpoint。运行命令、代码 commit、数据版本和脚本版本写入 `figure_manifest.json`。
+
+每个正式 run 的最小结构：
+
+```text
+run/
+  config.json                 # 预算/方法/seed/输入帧/选择口径
+  metadata.json               # 轴、spacing、数据校验、独立单位
+  split_manifest.json         # development/validation/test 与参考隔离
+  roi_manifest.json           # 固定 ROI/检测/主终点/δ
+  logs/                       # 训练、验证曲线与策略轨迹（若使用）
+  checkpoints/                # 本地保存，遵守仓库大文件规则
+  metrics/                    # 单位级 CSV、汇总 JSON、背景/结构/深度
+  figures/                    # Fig ID、PDF/SVG/PNG、review/、figure_manifest.json
+  report/RESULTS.md            # 定性→定量→验收→限制→复现命令
 ```
-ACES/profiling/      # M1: candidates.py + risk.py + risk_field.py（CLI）
-ACES/calibration/    # M2: micro_probe.py + utility.py（复用 t4b_rgrid 协议）
-ACES/sampling/       # M3+: adaptive.py（hard→soft→depth-conditioned，Gate 后才写）
-ACES/evaluation/     # 按需从 evaluate_stage2.py 演化，不抢跑
-```
 
-对应关系：`t4b_rgrid.py`/`t4b_sgrid.py` = micro-probe 素材；`qmask/geometry.py`+`sampling.py` = baseline；`shortcut_risk.py` 思路并入 `profiling/risk.py`；`evaluate.py` 深度诊断以后并入 evaluation。所有 sampler 实现统一接口 `sample(image, policy_state, seed) → (views, metadata)`，metadata 含 family_id/offsets_voxel/offsets_um/stride/policy_probability/risk/utility。
+关键节点同步 `PROJECT_LOG.md` 与 `project_progress_status.md`：实验 ID、阶段 Gate、证据路径、完成/未完成、明确下一动作。只有冻结协议正式验证才能标 ✅；脚本存在、pilot 跑完、拟合成功均不能代替验收。
 
-单元测试（§42）：offset 不变性、policy 可复现、相关噪声→R_N↑、平移结构→R_S↑、复制图像→R_I≈1、风险分解独立性、family 聚合正确性、test loader 不触碰 calibration API。
+## 10. 预算与工作优先级
 
-## 8. 预算与优先级（⚠️ 修正 3）
+1. **P0**：独立参考、固定 ROI、数据/尺度语义、正式 checkpoint selection；先修评估再新增训练。
+2. **P1–P3**：green 最小成像闭环 → 少量关键配对消融 → 正式重复与独立测试。先补原 VALID/SN2N 在真实主数据上的公平结果。
+3. **P4**：有必要时简单深度/质量条件方案，再决定是否保留 micro-probe/hard/soft。不全面重跑历史 family。
+4. **P5**：跨体/通道应用与论文图表；动态功能实验与新模态根据数据条件扩展。
 
-- **Priority 1**：candidate Δ/Γ → R_N/R_S/R_I（risk field，CPU 为主）。
-- **Priority 2**：Γ → 2-epoch micro-probe → U_probe vs oracle（**全项目关键 Gate**）。
-  - ⚠️ oracle 成本控制：只在 8–12 个精选 family 上算 oracle，且用 20ep pilot 协议（与 rgrid 一致），不做 M×80ep×3seeds 全矩阵。
-- **Priority 3–5**：hard → soft → depth-conditioned（逐 Gate 推进）。
-- **Priority 6**：真实数据 deep-signal 验证（**25 帧已到位**，thy1-yfp green/red raw；A/B split + AVG25 参考协议，2026-10-09 启动）。
-  - 补记（10-11 更新，green1300 **7/7 家族全部完成**）：先定性（深层切块 + 高分辨 zoom 无塌缩/伪影）→ 再定量。**PSNR 增益随深度单调增大**（shallow −0.39~+3.30 / mid −0.01~+5.93 / **deep +3.35~+6.71 dB**），深层获益最大；单帧去噪背景高频噪声 proxy 比 25 帧平均还低 2.1~2.5×，深层 SBR 保留至 AVG-25 参考的 90~94.5%（无明显过平滑）。**双协议一致**：oracle 分带 U_oracle 与 deepsignal 分带 PSNR 在三带上家族排序逐位相同（deep 带 0 处交换）——互为交叉验证。**⚠️ 但 M1 风险场的家族排序未复现**（7/7：Spearman −0.393, p=0.383；qmask_xy 实测第 1 而 M1 判 5/15，qmask_xyz_tetra 实测第 5 而 M1 判 1/15；下半区 valid_corners/sn2n_xy_diag/axis_z_d2 三档 3/7 精确命中）——M1 只在"识别坏 family"上有效，**A3-1b 先验的 family 序是 regime 依赖的，不可跨数据/预算搬运**，与 A3-2e（U_probe 双 regime）结论同源。**新证据（M3 Exp F 动机）**：最优 family **随深度翻转**——shallow 冠军 qmask_xy（deep 带仅第 4）vs deep 冠军 sn2n_xy_diag（shallow 带倒数第 2），qmask_yz 由 shallow 第 5 升至 deep 第 2；H6 深度条件策略有同数据直接证据。详见 PROJECT_LOG A3-4b / A3-4c / A3-4d。
-- **Priority 7–8**：3D Wiener 频域基线（排除"只是激进平滑"解释）；online curriculum/RL/4D（future，不做）。
-- micro-probe 预算：2 ep × 100–200 batches × 64–128 patches，探索期 1 seed、正式校准 3 seeds。
-- **不再投入**：τ/阈值 sweep、新固定 ellipsoid、更多固定 xyz mask、堆 epoch、test proxy 挑 checkpoint、单图证明 deep enhancement、第一版上 RL/Transformer。
+不再投入：纯风险阈值 sweep、为排名而扩 family、无目标堆 epoch、test proxy 挑 checkpoint、测试参考选策略、单图证明深层优势、第一版 RL/meta-learning/大型网络替换。历史失败实验保留，不因重构删证据。服务器长训练按现有 `screen` 约定执行，设备/资源以实际环境为准；本次文档更新不代表启动这些实验。
 
-⚠️ **修正 4（资源现实）**：GPU1–3 常被并行项目占用；risk field 全程 CPU 可做，micro-probe/oracle 训练按 GPU 空闲排队，长训练一律 screen 启动。
+## 11. 历史证据的保留与重新解释
 
-## 9. 归因与统计纪律
+| 历史结果 | 当前可保留结论 | 不能沿用为正式结论 |
+|---|---|---|
+| green1300 7-family、seed3407、20ep | 对含输入的 AVG25 参考，深层 PSNR gain +3.35~+6.71 dB；提示恢复潜力与深度相关配对差异 | 独立测试成像闭环完成、神经元检测提升、排除过平滑 |
+| top10%/bottom50% SBR/CNR 与背景 Laplacian | 探索性的亮度分布/高频统计；可用于诊断 | 固定解剖 ROI 对比、真实信号保留率、可靠背景噪声估计 |
+| M1 family 排序在 green 未复现 | 不应将固定 risk 分数直接当最优 family selector | 风险已普遍证明能筛坏 family；adaptive 适用所有数据 |
+| 20ep 内 adaptive gap 收窄、80ep 转移失效 | 校准/数据/预算依赖的探索线索 | 无参考部署有效、正式深层成像优势已成立 |
+| 3P/CIDC25/Neurofinder 历史复现与消融 | 复用管线、候选提名、机制与失败边界材料 | 将不同参考/尺度/选择口径拼为统一论文主表 |
 
-- 第一阶段严格固定 backbone/loss/optimizer/lr/patch/budget/augmentation，只变 sampling——Performance=F(sampling)。
-- sampling 机制证明有效之后，才允许研究 deep-aware loss（L=L_ssl+λd·L_deep+λg·L_grad），且 w_deep 只能由部署期可观测信号质量导出。
-- 每个正式 run 目录：config.json / metadata.json / calibration/(candidate_families, risk_field, utility, policy) / logs/(train_losses, eval_curve, policy_trace) / checkpoints / metrics / report/RESULTS.md。policy_trace 逐 epoch 记录 family histogram、策略熵、mean risk/utility（监测 policy collapse）。
+旧日志中的“全部收口/通过/过平滑假设被推翻”按当时探索口径保留；新结论以本方案的正式评估重判。不能将多个 proxy 的同向变化当作独立结构保真的充分证据。
 
-## 10. 成功标准（Level 1–5）
-
-1. 机制：pairability ≠ training utility（已有初步证据，需正式跨数据验证）；
-2. 预测：U_probe → U_oracle 可重复正相关；
-3. 方法：Γ̂ 稳定逼近 Γ*（G_oracle → 0）；
-4. 应用：ΔSNR/CNR/SBR_deep > 0 且结构保真；
-5. 生物：深层 neuron detection/reconstruction 实际改善。
-Level 1–4 成立后才把完整 biological claim 写进论文主结论。
-
-## 11. 变更记录
+## 12. 变更记录
 
 | 日期 | 变更 | 依据 |
 |---|---|---|
-| 2026-09-22 | 初版：由 ChatGPT 修正方案经审查固定；4 处修正（25 帧 split 降级为前置条件 / 重构改增量式 / oracle subset 化 / GPU 排队） | 方案审查（PROJECT_LOG §3-S2） |
-| 2026-09-25 | **U_probe v1 → v2 回炉**：Exp C 判定 v1 不通过（Spearman=−0.31 ns）。归因：①固定符号先验在 3P 空间 20ep 预算下方向全反（相似度类特征实际正向预测：R_I +0.89、residual_corr +0.82、cross_view +0.84）；②**跨 regime 符号矛盾**（同一特征 3P 空间 +0.89 vs CIDC25 时间轴 −0.82）——固定权重分数原理上不可能跨 regime 预测效用（H4 核心证据）。v2 定义改为 **regime-conditioned 校准**：在目标 regime 开发数据上用极简特征（{loss_neighbor_mean, cross_view_consistency}，LOO ρ=+0.82 初判）拟合线性权重，权重不跨 regime 迁移；配合 3-seed oracle 误差棒与 80ep 预算敏感性复核。 | PROJECT_LOG A3-2d、`runs/m2_{micro_probe,oracle}_3p_seed3407/`（⚠️ 该路径位于 /data3，挂载点当前离线，恢复后复核数字） |
-| 2026-10-07 | **Gate P2→P3 终判：有条件通过（conditional PASS）**。10 family × 3 seed oracle 均值上重拟合 v2：朴素 Spearman ρ=+0.467（p=0.174）不显著，但归因于判据不可达而非 probe 失效——oracle 排序自身单 seed 间 ρ̄=+0.143（信度 ≈0.33，任何预测器上限 ≈0.58），45 对家族仅 13 对统计可分，中段排序在 oracle 本身即 seed 主导。核心证据：可分对上 LOO 方向准确率 **12/13（二项 p≈0.002）**、top3-vs-bottom3 **LOO AUC=0.89**（全拟合 1.0）——adaptive 选择所需的判别能力成立。3-seed 均值权重 w=[+1.45, +4.47]（存 `u_probe_v2_3seed.json`）。仅有的可靠错判：axis_y_d1 vs diag_yz（z=8.5 最大对，v2 低估 axis_y_d1）。M3 准入以 top/bottom 判别为准。**【2026-10-08 补齐】**80ep 预算敏感性：shortcut 平台假说不成立（同 seed 排序 ρ=+1.000，相似性家族优势 4× 预算下保持）；CIDC25 反向验证：3P 权重迁移失效（ρ=+0.17 ns vs regime 内 +0.73）且会把 dt=1 捷径陷阱选为最优臂——regime-conditioned 设计闭环，**M2 全部收口**。 | PROJECT_LOG A3-2h、`runs/m2_oracle_3p_seed340{7,8,9}/`、`u_probe_v2_3seed.json`、`u_oracle_3seed_full.json`、`calibration/v2_judgment.py` |
-| 2026-10-08 | **80ep 预算敏感性：shortcut 平台假说不成立**。6 代表 family × seed 3407 的 80ep oracle：①同 seed 20ep→80ep 排序 Spearman=+1.000，U_oracle 排序预算稳定；②相似性家族（valid_corners/qmask_xy）优势在 4× 预算下保持（valid_corners 80ep 7.740 为 6 家族最高；增益差 −0.157dB ≪ seed 噪声）——20ep oracle 量的是持久性质而非暂时捷径；③20ep 3-seed-mean vs 80ep ρ=+0.43 的分歧与信度上限分析一致（seed 而非预算所致）。P2→P3 有条件通过的最后一个预算侧保留意见撤销；仅余 CIDC25 反向验证。 | PROJECT_LOG A3-2i、`runs/m2_oracle_3p_80ep_seed3407/` |
-| 2026-10-08 | **CIDC25 反向验证通过（M2 全部收口）**：时间轴 micro-probe（新模块 `calibration/micro_probe_temporal.py`，镜像 t4b_rgrid Δt 配对 + micro_probe 特征协议，9 个 dt × 2ep×100batch）证明 **3P 拟合权重不可跨 regime 迁移**：全 9 dt 上迁移 ρ=+0.17（p=0.67，失效）vs 时间轴 regime 内拟合 ρ=+0.73（p=0.02）；**3P 权重把 dt=1 选为最优臂（U=6.96 全场最高，由 L_N=2.32 驱动）而 dt=1 是 oracle 最差档**（26.4dB；dt=1 帧间噪声相关破坏 N2N 假设，与 M1 时间轴 R_N 高一致）——正是 H4 警告的近重复捷径陷阱。机制细化（H4 探针级证据）：cross_view_consistency 两 regime 同号为普适特征（CIDC25 +0.80, p=0.01）；loss_neighbor_mean 在 3P 正预测、在时间轴被 dt=1 捷径点反号（L_N 最高 × 效用最低）；所需权重比 cross/L_N 从 3P 的 3.1 → CIDC25 的 24.2。结论：特征可共享、**校准必须逐 regime**——regime-conditioned v2 设计的正确性闭环。保留项：CIDC25 oracle 为 rgrid 单 seed（16/4 网络），probe 为 32/8 网络（与 3P 探针对齐）。 | PROJECT_LOG A3-2j、`runs/m2_micro_probe_cidc25_seed3407/`、`calibration/micro_probe_temporal.py` |
-| 2026-10-08 | **Exp D（adaptive-hard）解析版 pilot**（M3 启动）：新模块 `calibration/exp_d_gap.py` 零新训练完成 Oracle Gap 分析（3P dev/held-out seed 分离协议 + CIDC25 regime 内）。双 regime 点估计均过 Gate P3→P4 判据：3P adaptive gap 0.039dB（vs QMask 0.473，收窄 92%）、CIDC25 adaptive gap 0.756dB（vs 最近邻 3.629，收窄 79%）。正式判定补项已列（CIDC25 补 2 seed、3P 80ep 3-seed）。 | PROJECT_LOG A3-3a、`runs/m2_oracle_3p_seed3407/exp_d_gap.json` |
-| 2026-10-08 | **Exp D 最终判定：校准 regime 内成立 + 跨预算迁移失效（双发现）**。补种完成后：①20ep 校准 regime 内 adaptive 有效（3P gap 0.039 双 held-out seed 一致、CIDC25 3-seed 收窄 47%）；②**20ep 校准 → 80ep 生产预算迁移失效**：adaptive 臂 sn2n_xy_diag 80ep 3-seed 7.39±0.18 在 4 关键家族垫底（qmask_xy 7.68±0.07 最优，3/3 seed 为正差 +0.296）；机制=预算饱和不对称（sn2n 20ep 已收敛 Δ+0.02，qmask/valid 慢热各 +0.5）。**U_probe 校准是（数据 regime × 预算 regime）双条件函数**——与 CIDC25 数据 regime 反向验证共同构成 regime-conditioning 完整证据（H4 升级）；M3 设计约束：目标预算 B 的部署须在 B 下校准。附带：dt=8 内点峰 seed 脆弱（std 5.21dB）须标注；20ep 同 seed 排序 ρ=+1.000 与 3-seed 均值排序反转（ρ=−0.60）并存——单 seed 排序稳定性部分是 seed 噪声对齐。 | PROJECT_LOG A3-3b/c、`m2_oracle_3p_80ep_seed340{7,8,9}/`、`stage01_cidc25_rgrid_seed340{8,9}/` |
-| 2026-10-09 | **定性（视觉）对比图补齐启动**（用户要求：6 张定量图之外需直观去噪结果供人工审阅）。新脚本 `calibration/render_qualitative_cidc.py`（零新训练）：CIDC25 定性面板 `fig_q1_cidc25_qualitative.png`——3 行（F1 Validation 高亮前景 patch 64×128×128 取 z 中切片，t0=718）× 5 列（输入 F1 \| GT F0 均值 \| dt=1 \| dt=8 \| dt=64），归一化与 t4b_rgrid eval 协议一致（F1 缓存统计 mean=204.45/std=139.76），逐行 1–99.5 百分位显示窗。review 切块 `review/cidc25_row_{1,2,3}.png`（1100×220，符合读图限制）已人工可读；初步定性：dt=1（最差臂）过度平滑/结构丢失可见，dt=64（3-seed 稳健最优）最接近 GT——与定量结论一致。3P 侧定性面板（fig_q2，4 家族 vs AVG-9 伪 GT）依赖 `m2_qual_3p_seed3407` 重训练（screen `qual_3p`，GPU1 进行中，save_checkpoint=True）。README 审核索引已更新。
-
-**同日补记（fig_q2 完成）**：`m2_qual_3p_seed3407` 重训练完成（4/4 checkpoint，U_oracle：qmask_xy +7.5310 / valid_corners +7.6738 / sn2n_xy_diag +7.0246 / axis_z_d2 +6.7451 dB，raw=12.809，n=2016 eval patch）。新脚本 `calibration/render_qualitative_3p.py` 渲染 `fig_q2_3p_qualitative.png`：3 行（repeat 栈 z 三分带各取 AVG-9 最亮 patch，z 中切片）× 6 列（输入 frame 0 | AVG-9 伪 GT | 4 家族，各列标注 U_oracle），checkpoint 内 pool_stats 归一化。review 切块 `review/3p_row_{1,2,3}.png`（1170×220）已逐张判读：4 家族跨浅/中/深 z 带均明显去噪，valid_corners/qmask_xy 结构保留最好，排序与 U_oracle 定量一致，无塌缩/伪影。**同日按用户反馈（灰度对比不明显）将两脚本统一为 turbo 伪彩 + (1.0, 99.9) 分位窗（与 `qmask/paperviz.py` 格式一致）并重渲**，6 张 review 切块重读复核结论不变。**定性图补齐两轨道全部完成，待用户人工审阅。** | PROJECT_LOG A3-3d、`/ssd1/wjb/Denoising_PM/ACES/runs/m2m3_paper_figures/`（fig_q1 + review/）、`calibration/render_qualitative_cidc.py` |
+| 2026-10-12 | 归档旧 PLAN/状态表；主线重构为深层有效信号恢复；风险/probe/adaptive 调整为基础解释或可选增强；新增独立参考/固定 ROI 联合 Gate、S0–S5、E0–E7、论文图表和复现规范 | 用户明确以最终成像质量为评判终点并同意重构；现行代码、JSON 和日志核查；前序讨论的“先证明图像变好→再解释配对→最后自动选择” |
