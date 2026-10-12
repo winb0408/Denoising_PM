@@ -1,0 +1,12 @@
+[oracle] patch 池: 128 × (64, 128, 128) (mean=4444.6366, std=4885.9828)
+Total Parameters: 1.5437M
+[oracle] sn2n_xy_diag: U_oracle=+7.1771 dB (raw=12.809 → den=19.986, n=2016, 3445.9s)
+[oracle] qmask_xy: U_oracle=+7.7283 dB (raw=12.809 → den=20.537, n=2016, 9416.5s)
+[oracle] valid_corners: U_oracle=+7.4724 dB (raw=12.809 → den=20.281, n=2016, 5790.5s)
+[oracle] axis_y_d1: U_oracle=+7.5535 dB (raw=12.809 → den=20.362, n=2016, 9521.1s)
+
+=== oracle U_oracle 增益（降序）===
+  qmask_xy         U_oracle=+7.7283 dB (raw=12.809 → den=20.537) [shallow=+7.61 mid=+7.52 deep=+8.16] n=2016
+  axis_y_d1        U_oracle=+7.5535 dB (raw=12.809 → den=20.362) [shallow=+7.41 mid=+7.26 deep=+8.13] n=2016
+  valid_corners    U_oracle=+7.4724 dB (raw=12.809 → den=20.281) [shallow=+7.35 mid=+7.09 deep=+8.17] n=2016
+  sn2n_xy_diag     U_oracle=+7.1771 dB (raw=12.809 → den=19.986) [shallow=+7.07 mid=+6.77 deep=+7.89] n=2016

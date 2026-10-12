@@ -1,0 +1,32 @@
+{
+  "epochs": 2,
+  "batches_per_epoch": 100,
+  "patch_size": [
+    64,
+    128,
+    128
+  ],
+  "batch_size": 1,
+  "lr": 0.0001,
+  "seed": 3407,
+  "device": "cuda",
+  "max_patches": 128,
+  "base_features": 32,
+  "n_groups": 8,
+  "weight_idt": 1.0,
+  "clip_gradients": 1.0,
+  "overlap": 0.0,
+  "min_view_dim": 8,
+  "data_root": "/data2/wjb/threePM/ThreePM_openDatasets/AI4Life-CIDC25",
+  "dt_list": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    16,
+    32,
+    64
+  ]
+}

@@ -1,0 +1,10 @@
+[deep] families: ['axis_z_d2', 'qmask_xy', 'qmask_xyz_tetra', 'qmask_xz', 'qmask_yz', 'sn2n_xy_diag', 'valid_corners']
+Total Parameters: 1.5437M
+[deep] axis_z_d2: 推理完成 U_oracle=+1.01dB
+[deep] qmask_xy: 推理完成 U_oracle=+5.41dB
+[deep] qmask_xyz_tetra: 推理完成 U_oracle=+4.33dB
+[deep] qmask_xz: 推理完成 U_oracle=+4.88dB
+[deep] qmask_yz: 推理完成 U_oracle=+4.88dB
+[deep] sn2n_xy_diag: 推理完成 U_oracle=+4.03dB
+[deep] valid_corners: 推理完成 U_oracle=+4.85dB
+[deep] 完成：/ssd1/wjb/Denoising_PM/ACES/runs/m2_oracle_green1300_seed3407/deepsignal

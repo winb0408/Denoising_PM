@@ -1,7 +1,15 @@
+"""ACES Stage 2 patch 评估（区域化 PSNR/SSIM/SNR/SBR/CNR 指标）。
+
+语义警告（Z/T 轴）：Neurofinder 数据第一维是时间 T 不是物理深度 Z；
+本模块的 "z" 索引仅是数组轴名，物理语义见各 dataset 的 metadata；
+真实体数据 [Z,Y,X] 与动态数据 [T,Y,X] 不得混用深度解释。
+"""
+
 from __future__ import annotations
 
 import json
 import math
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -34,11 +42,34 @@ def _ssim_3d(prediction: np.ndarray, target: np.ndarray, data_range: float) -> f
     return float(value)
 
 
+def _derive_selected_epoch(
+    checkpoint_path: str | Path | None,
+    selected_epoch: int | None = None,
+) -> int | str | None:
+    """从 checkpoint 路径推导被评估的 epoch（P0-7）。
+
+    优先级：显式 selected_epoch > 文件名中的 epoch 数字（如 ``*_epoch12.pth``、
+    ``model_0030.pth``）> 文件名 stem > None（完全无 checkpoint 信息）。
+    """
+    if selected_epoch is not None:
+        return int(selected_epoch)
+    if checkpoint_path is None:
+        return None
+    stem = Path(checkpoint_path).stem
+    match = re.search(r"(?:epoch|ep)[ _-]?(\d+)", stem, re.IGNORECASE)
+    if match is None:
+        match = re.search(r"(\d+)$", stem)
+    if match is not None:
+        return int(match.group(1))
+    return stem
+
+
 def _region_metrics(
     prediction: np.ndarray,
     target: np.ndarray,
     mask: np.ndarray,
     bg_mask: np.ndarray | None = None,
+    region: str | None = None,
 ) -> dict[str, float]:
     valid = mask & np.isfinite(prediction) & np.isfinite(target)
     if not valid.any():
@@ -49,6 +80,7 @@ def _region_metrics(
             "ssim": float("nan"),
             "snr_db": float("nan"),
             "sbr_db": float("nan"),
+            "cnr_db": float("nan"),
             "pred_mean": float("nan"),
             "target_mean": float("nan"),
             "pred_std": float("nan"),
@@ -62,14 +94,19 @@ def _region_metrics(
     mae = float(np.mean(np.abs(diff)))
     data_range = float(np.percentile(ref, 99.9) - np.percentile(ref, 0.1))
     psnr = math.inf if mse == 0 else float(10.0 * math.log10((max(data_range, 1e-6) ** 2) / mse))
-    # SSIM 是全 patch 的空间结构指标：在完整 patch 上算一次（与 region 无关），
-    # data_range 固定用全 patch 分位（保证三个 region 行数值一致）；
-    # SNR/SBR 只对含前景的 region 有定义。
-    full_ref = target[np.isfinite(target)].astype(np.float64, copy=False)
-    full_range = float(np.percentile(full_ref, 99.9) - np.percentile(full_ref, 0.1)) if full_ref.size else float("nan")
-    ssim = _ssim_3d(prediction, target, full_range)
+    # P0-6 策略：正式主表只报 full SSIM；fg/bg 行 SSIM 置 NaN，
+    # 不用重复的全 patch 数值伪装成 region-specific（masked/local SSIM 不稳定，不报）。
+    # region=None 保持旧版行为（恒返回全 patch SSIM），兼容外部调用方。
+    if region is None or region == "all":
+        full_ref = target[np.isfinite(target)].astype(np.float64, copy=False)
+        full_range = float(np.percentile(full_ref, 99.9) - np.percentile(full_ref, 0.1)) if full_ref.size else float("nan")
+        ssim = _ssim_3d(prediction, target, full_range)
+    else:
+        ssim = float("nan")
+    # SNR/SBR/CNR 需要背景参考，只对含前景的 region（all/foreground）有定义。
     snr_db = float("nan")
     sbr_db = float("nan")
+    cnr_db = float("nan")
     if bg_mask is not None:
         bg_valid = bg_mask & np.isfinite(prediction)
         if bg_valid.any():
@@ -77,8 +114,13 @@ def _region_metrics(
             bg_std = float(bg_pred.std())
             bg_mean = float(bg_pred.mean())
             fg_mean = float(pred.mean())
+            fg_std = float(pred.std())
             snr_db = math.inf if bg_std == 0 else float(20.0 * math.log10(max(fg_mean, 1e-6) / max(bg_std, 1e-6)))
             sbr_db = math.inf if bg_mean <= 0 else float(20.0 * math.log10(max(fg_mean, 1e-6) / max(bg_mean, 1e-6)))
+            # P0-5：CNR = |μS−μB| / (sqrt(σS²+σB²)+ε)，σS/μS 取 pred 在前景 mask 内的统计，
+            # σB/μB 取 pred 在背景 mask 内的统计；cnr_db = 20*log10(CNR)。
+            cnr = abs(fg_mean - bg_mean) / (math.sqrt(fg_std * fg_std + bg_std * bg_std) + 1e-6)
+            cnr_db = float(20.0 * math.log10(cnr)) if cnr > 0 else float("-inf")
     return {
         "mse": mse,
         "mae": mae,
@@ -86,6 +128,7 @@ def _region_metrics(
         "ssim": ssim,
         "snr_db": snr_db,
         "sbr_db": sbr_db,
+        "cnr_db": cnr_db,
         "pred_mean": float(pred.mean()),
         "target_mean": float(ref.mean()),
         "pred_std": float(pred.std()),
@@ -157,6 +200,11 @@ def evaluate_model_on_patches(
     foreground_mask_path: str | Path | None = None,
     downsample_stride: tuple[int, int, int] | None = None,
     metrics_filename: str = "eval_metrics.json",
+    checkpoint_path: str | Path | None = None,
+    selected_epoch: int | None = None,
+    selection_metric: str = "none",
+    selection_dataset: str = "test_patches",
+    selection_protocol: str = "official_eval_final_weights",
 ) -> dict[str, Any]:
     # downsample_stride 非空时启用"对齐评估"：对输入 patch 与 mean9 目标/掩码施加
     # 相同的跨步下采样，使下采样类采样档（valid/sn2n_xy/iso3d）在评估时看到的分辨率
@@ -209,12 +257,12 @@ def evaluate_model_on_patches(
                 for name, m in mask_full.items()
             }
             for region, mask in patch_masks.items():
-                # SNR/SBR 需要背景参考：给 all/foreground 行传背景掩码（background 行自身即背景）。
+                # SNR/SBR/CNR 需要背景参考：给 all/foreground 行传背景掩码（background 行自身即背景）。
                 bg_mask = patch_masks.get("background") if region in ("all", "foreground") else None
                 rows.append({
                     "patch_index": item_index,
                     "region": region,
-                    **_region_metrics(output_denorm, target, mask, bg_mask=bg_mask),
+                    **_region_metrics(output_denorm, target, mask, bg_mask=bg_mask, region=region),
                 })
 
     summary: dict[str, Any] = {
@@ -224,13 +272,25 @@ def evaluate_model_on_patches(
         "selection": "foreground_rich",
         "eval_mode": "downsample_aligned" if align_active else "full_resolution",
         "downsample_stride_zyx": list(stride) if align_active else [1, 1, 1],
+        # P0-7：本次评估所用 checkpoint 的选择元数据，随指标一起落盘，
+        # 便于事后追溯主表数字对应的是 final 权重还是 best 重验证。
+        "checkpoint_selection": {
+            "selected_epoch": _derive_selected_epoch(checkpoint_path, selected_epoch),
+            "selection_metric": selection_metric,
+            "selection_dataset": selection_dataset,
+            "selection_protocol": selection_protocol,
+        },
         "regions": {},
     }
     for region in ("all", "foreground", "background"):
         selected = [row for row in rows if row["region"] == region and row["n"] > 0]
         summary["regions"][region] = {}
-        for key in ("mse", "mae", "psnr_db", "ssim", "snr_db", "sbr_db",
+        for key in ("mse", "mae", "psnr_db", "ssim", "snr_db", "sbr_db", "cnr_db",
                     "pred_mean", "target_mean", "pred_std", "target_std"):
+            # P0-6：SSIM 只在 all 行聚合（full SSIM）；fg/bg 行保持 NaN，不聚合重复的全 patch 值。
+            if key == "ssim" and region != "all":
+                summary["regions"][region][key] = float("nan")
+                continue
             vals = [float(row[key]) for row in selected if np.isfinite(row[key])]
             summary["regions"][region][key] = float(np.mean(vals)) if vals else float("nan")
         summary["regions"][region]["n_voxels"] = int(sum(int(row["n"]) for row in selected))
@@ -286,6 +346,12 @@ def evaluate_checkpoint(
         max_patches=int(eval_cfg.get("patch_count", 2)),
         foreground_percentile=float(eval_cfg.get("foreground_percentile", 75.0)),
         foreground_mask_path=eval_cfg.get("foreground_mask"),
+        # P0-7：官方评估固定评估给定的（通常是 final）checkpoint 权重，
+        # epoch 从 checkpoint 文件名推导（推不出则记文件名 stem）。
+        checkpoint_path=checkpoint_path,
+        selection_metric="none",
+        selection_dataset="test_patches",
+        selection_protocol="official_eval_final_weights",
     )
 
 

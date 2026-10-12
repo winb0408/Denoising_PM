@@ -1,0 +1,100 @@
+{
+ "3p": {
+  "regime": "3P spatial (20ep, eval on held-out seeds 3408/3409)",
+  "oracle_best": {
+   "arm": "axis_y_d1",
+   "u": 7.388310504898403
+  },
+  "oracle-best": {
+   "arm": "axis_y_d1",
+   "gap_heldout_mean": 0.0,
+   "gap_per_seed": {
+    "3408": 0.0,
+    "3409": 0.0
+   }
+  },
+  "adaptive-hard(v2)": {
+   "arm": "sn2n_xy_diag",
+   "gap_heldout_mean": 0.03909829562849021,
+   "gap_per_seed": {
+    "3408": 0.046250376912323254,
+    "3409": 0.031946214344657164
+   }
+  },
+  "fixed-VALID": {
+   "arm": "valid_corners",
+   "gap_heldout_mean": 0.5264986870994379,
+   "gap_per_seed": {
+    "3408": 0.48320867936867185,
+    "3409": 0.569788694830204
+   }
+  },
+  "fixed-QMask": {
+   "arm": "qmask_xy",
+   "gap_heldout_mean": 0.4729156046100833,
+   "gap_per_seed": {
+    "3408": 0.6870845511221928,
+    "3409": 0.2587466580979738
+   }
+  },
+  "fixed-worst": {
+   "arm": "axis_z_d2",
+   "gap_heldout_mean": 0.6861481816645818,
+   "gap_per_seed": {
+    "3408": 0.621053730851389,
+    "3409": 0.7512426324777746
+   }
+  },
+  "weights_dev_s3407": {
+   "loss_neighbor_mean": 1.1624933070032608,
+   "cross_view_consistency": 5.555313944296511
+  }
+ },
+ "cidc25": {
+  "regime": "CIDC25 temporal (20ep × 3 seed, weights fit on mean, per-seed gaps)",
+  "oracle_best": {
+   "arm": 64,
+   "u": 29.335890393984567
+  },
+  "oracle-best": {
+   "arm": 64,
+   "gap_heldout_mean": 0.0,
+   "gap_per_seed": {
+    "3407": 0.0,
+    "3408": 0.0,
+    "3409": 0.0
+   }
+  },
+  "adaptive-hard(v2)": {
+   "arm": 32,
+   "gap_heldout_mean": 1.8210959928983996,
+   "gap_per_seed": {
+    "3407": 1.1056755404987229,
+    "3408": 1.51300911021319,
+    "3409": 2.844603327983286
+   }
+  },
+  "fixed-nearest(dt=1)": {
+   "arm": 1,
+   "gap_heldout_mean": 3.452212214940404,
+   "gap_per_seed": {
+    "3407": 2.8732828529333325,
+    "3408": 5.167416505804265,
+    "3409": 2.3159372860836136
+   }
+  },
+  "fixed-worst": {
+   "arm": 6,
+   "gap_heldout_mean": 4.257821689466763,
+   "gap_per_seed": {
+    "3407": 2.6877374415531285,
+    "3408": 5.600288894840894,
+    "3409": 4.485438732006266
+   }
+  },
+  "weights_inregime_3seed": {
+   "loss_neighbor_mean": 2.0878555392037903,
+   "cross_view_consistency": 26.38020585252266
+  }
+ }
+}

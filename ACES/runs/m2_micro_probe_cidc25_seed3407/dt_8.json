@@ -1,0 +1,14 @@
+{
+  "dt": 8,
+  "elapsed_seconds": 106.95069580996642,
+  "loss_neighbor_mean": 1.56150037124753,
+  "loss_neighbor_slope": -0.023665831495541086,
+  "loss_identity_mean": 1.5406227697432042,
+  "loss_identity_slope": -0.02364861966911748,
+  "residual_corr": -0.8843654717427042,
+  "output_input_corr": 0.3832981774365679,
+  "output_gradient_ratio": 0.1184685677435067,
+  "output_variance_ratio": 1.3332724206407724,
+  "cross_view_consistency": 0.8983271241632402,
+  "loss_stability": 0.21271134195798394
+}

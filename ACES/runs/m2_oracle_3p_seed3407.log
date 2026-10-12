@@ -1,0 +1,25 @@
+[oracle] probe-csv 自动子集（top4+bottom4+2mid, u_probe 降序）: ['axis_y_d1', 'diag_xyz', 'qmask_yz', 'valid_corners', 'axis_z_d2', 'diag_yz', 'axis_x_d1', 'axis_y_d2', 'qmask_xy', 'sn2n_xy_diag']
+[oracle] patch 池: 128 × (64, 128, 128) (mean=4444.6366, std=4885.9828)
+[oracle] axis_y_d1: 已有结果，跳过 (U_oracle=+7.4854 dB)
+[oracle] diag_xyz: 已有结果，跳过 (U_oracle=+7.1940 dB)
+Total Parameters: 1.5437M
+[oracle] qmask_yz: U_oracle=+7.1978 dB (raw=12.809 → den=20.007, n=2016, 6368.6s)
+[oracle] valid_corners: U_oracle=+7.7161 dB (raw=12.809 → den=20.525, n=2016, 4433.5s)
+[oracle] axis_z_d2: U_oracle=+6.2659 dB (raw=12.809 → den=19.075, n=2016, 2873.3s)
+[oracle] diag_yz: U_oracle=+6.8711 dB (raw=12.809 → den=19.680, n=2016, 1548.9s)
+[oracle] axis_x_d1: U_oracle=+7.5302 dB (raw=12.809 → den=20.339, n=2016, 5435.7s)
+[oracle] axis_y_d2: U_oracle=+7.3882 dB (raw=12.809 → den=20.197, n=2016, 4714.9s)
+[oracle] qmask_xy: U_oracle=+7.6891 dB (raw=12.809 → den=20.498, n=2016, 6708.8s)
+[oracle] sn2n_xy_diag: U_oracle=+7.5156 dB (raw=12.809 → den=20.324, n=2016, 3431.0s)
+
+=== oracle U_oracle 增益（降序）===
+  valid_corners    U_oracle=+7.7161 dB (raw=12.809 → den=20.525) [shallow=+7.55 mid=+7.34 deep=+8.44] n=2016
+  qmask_xy         U_oracle=+7.6891 dB (raw=12.809 → den=20.498) [shallow=+7.51 mid=+7.40 deep=+8.30] n=2016
+  axis_x_d1        U_oracle=+7.5302 dB (raw=12.809 → den=20.339) [shallow=+7.31 mid=+7.21 deep=+8.23] n=2016
+  sn2n_xy_diag     U_oracle=+7.5156 dB (raw=12.809 → den=20.324) [shallow=+7.35 mid=+7.21 deep=+8.14] n=2016
+  axis_y_d1        U_oracle=+7.4854 dB (raw=12.809 → den=20.294) [shallow=+7.33 mid=+7.11 deep=+8.20] n=2016
+  axis_y_d2        U_oracle=+7.3882 dB (raw=12.809 → den=20.197) [shallow=+7.34 mid=+6.92 deep=+8.14] n=2016
+  qmask_yz         U_oracle=+7.1978 dB (raw=12.809 → den=20.007) [shallow=+7.04 mid=+6.73 deep=+8.06] n=2016
+  diag_xyz         U_oracle=+7.1940 dB (raw=12.809 → den=20.003) [shallow=+7.16 mid=+6.61 deep=+8.10] n=2016
+  diag_yz          U_oracle=+6.8711 dB (raw=12.809 → den=19.680) [shallow=+6.61 mid=+6.35 deep=+7.91] n=2016
+  axis_z_d2        U_oracle=+6.2659 dB (raw=12.809 → den=19.075) [shallow=+5.85 mid=+5.74 deep=+7.47] n=2016

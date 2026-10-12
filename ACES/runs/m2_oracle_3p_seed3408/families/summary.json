@@ -1,0 +1,299 @@
+{
+  "event": "oracle_complete",
+  "config": {
+    "epochs": 20,
+    "batches_per_epoch": 100,
+    "patch_size": [
+      64,
+      128,
+      128
+    ],
+    "batch_size": 1,
+    "lr": 0.0001,
+    "seed": 3408,
+    "device": "cuda",
+    "base_features": 32,
+    "n_groups": 8,
+    "weight_idt": 1.0,
+    "clip_gradients": 1.0,
+    "max_train_patches": 128,
+    "overlap": 0.0,
+    "eval_stride_z": 16,
+    "eval_repeat_frames": null,
+    "max_eval_patches": 0
+  },
+  "n_families": 6,
+  "elapsed_seconds": 12727.48970142199,
+  "rows": [
+    {
+      "family_id": "axis_x_d1",
+      "offsets_zyx": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          0,
+          3
+        ]
+      ],
+      "n_eval_patches": 2016,
+      "psnr_raw_mean": 12.808812806668051,
+      "psnr_denoised_mean": 19.572191626315504,
+      "u_oracle_gain": 6.763378819647454,
+      "train_loss_final": 0.7843914589285851,
+      "epochs": 20,
+      "batches": 2000,
+      "elapsed_seconds": 3104.5825248309993,
+      "psnr_raw_shallow": 11.445009925571144,
+      "psnr_denoised_shallow": 17.884135008612716,
+      "u_oracle_gain_shallow": 6.439125083041572,
+      "n_eval_patches_shallow": 576,
+      "psnr_raw_mid": 14.66924041706134,
+      "psnr_denoised_mid": 21.096213701014218,
+      "u_oracle_gain_mid": 6.426973283952875,
+      "n_eval_patches_mid": 864,
+      "psnr_raw_deep": 11.381974272175022,
+      "psnr_denoised_deep": 18.974215131970226,
+      "u_oracle_gain_deep": 7.592240859795203,
+      "n_eval_patches_deep": 576
+    },
+    {
+      "family_id": "sn2n_xy_diag",
+      "offsets_zyx": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          2,
+          2
+        ],
+        [
+          0,
+          3,
+          3
+        ]
+      ],
+      "n_eval_patches": 2016,
+      "psnr_raw_mean": 12.808812806668051,
+      "psnr_denoised_mean": 20.15529647696309,
+      "u_oracle_gain": 7.346483670295042,
+      "train_loss_final": 0.7979426941275597,
+      "epochs": 20,
+      "batches": 2000,
+      "elapsed_seconds": 1579.4712741270196,
+      "psnr_raw_shallow": 11.445009925571144,
+      "psnr_denoised_shallow": 18.728661037602954,
+      "u_oracle_gain_shallow": 7.283651112031811,
+      "n_eval_patches_shallow": 576,
+      "psnr_raw_mid": 14.66924041706134,
+      "psnr_denoised_mid": 21.585750717922853,
+      "u_oracle_gain_mid": 6.9165103008615105,
+      "n_eval_patches_mid": 864,
+      "psnr_raw_deep": 11.381974272175022,
+      "psnr_denoised_deep": 19.436250554883593,
+      "u_oracle_gain_deep": 8.054276282708573,
+      "n_eval_patches_deep": 576
+    },
+    {
+      "family_id": "axis_y_d2",
+      "offsets_zyx": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          6,
+          0
+        ]
+      ],
+      "n_eval_patches": 2016,
+      "psnr_raw_mean": 12.808812806668051,
+      "psnr_denoised_mean": 19.985650640313928,
+      "u_oracle_gain": 7.176837833645877,
+      "train_loss_final": 0.8018109411001205,
+      "epochs": 20,
+      "batches": 2000,
+      "elapsed_seconds": 2178.1942171260016,
+      "psnr_raw_shallow": 11.445009925571144,
+      "psnr_denoised_shallow": 18.738872000185538,
+      "u_oracle_gain_shallow": 7.293862074614399,
+      "n_eval_patches_shallow": 576,
+      "psnr_raw_mid": 14.66924041706134,
+      "psnr_denoised_mid": 21.259065664491768,
+      "u_oracle_gain_mid": 6.589825247430425,
+      "n_eval_patches_mid": 864,
+      "psnr_raw_deep": 11.381974272175022,
+      "psnr_denoised_deep": 19.32230674417556,
+      "u_oracle_gain_deep": 7.940332472000536,
+      "n_eval_patches_deep": 576
+    },
+    {
+      "family_id": "qmask_yz",
+      "offsets_zyx": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ],
+      "n_eval_patches": 2016,
+      "psnr_raw_mean": 12.808812806668051,
+      "psnr_denoised_mean": 20.23911366713361,
+      "u_oracle_gain": 7.430300860465562,
+      "train_loss_final": 0.8069576358795166,
+      "epochs": 20,
+      "batches": 2000,
+      "elapsed_seconds": 3099.0653107960243,
+      "psnr_raw_shallow": 11.445009925571144,
+      "psnr_denoised_shallow": 18.80053489627168,
+      "u_oracle_gain_shallow": 7.355524970700537,
+      "n_eval_patches_shallow": 576,
+      "psnr_raw_mid": 14.66924041706134,
+      "psnr_denoised_mid": 21.63052693754806,
+      "u_oracle_gain_mid": 6.96128652048672,
+      "n_eval_patches_mid": 864,
+      "psnr_raw_deep": 11.381974272175022,
+      "psnr_denoised_deep": 19.590572532373876,
+      "u_oracle_gain_deep": 8.208598260198851,
+      "n_eval_patches_deep": 576
+    },
+    {
+      "family_id": "diag_xyz",
+      "offsets_zyx": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          2,
+          2,
+          2
+        ],
+        [
+          3,
+          3,
+          3
+        ]
+      ],
+      "n_eval_patches": 2016,
+      "psnr_raw_mean": 12.808812806668051,
+      "psnr_denoised_mean": 19.724446139453566,
+      "u_oracle_gain": 6.915633332785513,
+      "train_loss_final": 0.8344512197375298,
+      "epochs": 20,
+      "batches": 2000,
+      "elapsed_seconds": 1182.1457558519905,
+      "psnr_raw_shallow": 11.445009925571144,
+      "psnr_denoised_shallow": 18.110824005908288,
+      "u_oracle_gain_shallow": 6.665814080337146,
+      "n_eval_patches_shallow": 576,
+      "psnr_raw_mid": 14.66924041706134,
+      "psnr_denoised_mid": 21.128982869089324,
+      "u_oracle_gain_mid": 6.459742452027981,
+      "n_eval_patches_mid": 864,
+      "psnr_raw_deep": 11.381974272175022,
+      "psnr_denoised_deep": 19.231263178545202,
+      "u_oracle_gain_deep": 7.8492889063701785,
+      "n_eval_patches_deep": 576
+    },
+    {
+      "family_id": "diag_yz",
+      "offsets_zyx": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          2,
+          2,
+          0
+        ],
+        [
+          3,
+          3,
+          0
+        ]
+      ],
+      "n_eval_patches": 2016,
+      "psnr_raw_mean": 12.808812806668051,
+      "psnr_denoised_mean": 19.702148534236194,
+      "u_oracle_gain": 6.893335727568141,
+      "train_loss_final": 0.8262424141168594,
+      "epochs": 20,
+      "batches": 2000,
+      "elapsed_seconds": 1583.4649340009782,
+      "psnr_raw_shallow": 11.445009925571144,
+      "psnr_denoised_shallow": 18.121039373696355,
+      "u_oracle_gain_shallow": 6.676029448125212,
+      "n_eval_patches_shallow": 576,
+      "psnr_raw_mid": 14.66924041706134,
+      "psnr_denoised_mid": 21.014884580753133,
+      "u_oracle_gain_mid": 6.345644163691791,
+      "n_eval_patches_mid": 864,
+      "psnr_raw_deep": 11.381974272175022,
+      "psnr_denoised_deep": 19.31415362500062,
+      "u_oracle_gain_deep": 7.932179352825598,
+      "n_eval_patches_deep": 576
+    }
+  ]
+}

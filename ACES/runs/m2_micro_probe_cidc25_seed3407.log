@@ -1,0 +1,22 @@
+[probe-t] config: MicroProbeConfig(epochs=2, batches_per_epoch=100, patch_size=(64, 128, 128), batch_size=1, lr=0.0001, seed=3407, device='cuda', max_patches=128, base_features=32, n_groups=8, weight_idt=1.0, clip_gradients=1.0, overlap=0.0, min_view_dim=8)
+[probe-t] dt 列表: [1, 2, 3, 4, 6, 8, 16, 32, 64]
+[probe-t] dt=1: 配对池 128 × (64, 128, 128)
+Total Parameters: 1.5437M
+[probe-t] dt=1: L_N=2.3173 L_I=2.3554 cross=0.8035 (106.1s)
+[probe-t] dt=2: 配对池 128 × (64, 128, 128)
+[probe-t] dt=2: L_N=1.5180 L_I=1.5370 cross=0.8092 (106.7s)
+[probe-t] dt=3: 配对池 128 × (64, 128, 128)
+[probe-t] dt=3: L_N=1.5372 L_I=1.5483 cross=0.8412 (107.0s)
+[probe-t] dt=4: 配对池 128 × (64, 128, 128)
+[probe-t] dt=4: L_N=1.5408 L_I=1.5368 cross=0.8713 (107.2s)
+[probe-t] dt=6: 配对池 128 × (64, 128, 128)
+[probe-t] dt=6: L_N=1.5338 L_I=1.5157 cross=0.8974 (107.1s)
+[probe-t] dt=8: 配对池 128 × (64, 128, 128)
+[probe-t] dt=8: L_N=1.5615 L_I=1.5406 cross=0.8983 (107.0s)
+[probe-t] dt=16: 配对池 128 × (64, 128, 128)
+[probe-t] dt=16: L_N=1.5908 L_I=1.5668 cross=0.8981 (106.9s)
+[probe-t] dt=32: 配对池 128 × (64, 128, 128)
+[probe-t] dt=32: L_N=1.6262 L_I=1.6060 cross=0.9154 (107.1s)
+[probe-t] dt=64: 配对池 128 × (64, 128, 128)
+[probe-t] dt=64: L_N=1.5991 L_I=1.5607 cross=0.9166 (107.4s)
+[probe-t] 完成 → /data3/wjb/Denoising_PM/ACES/runs/m2_micro_probe_cidc25_seed3407/micro_probe_temporal.csv

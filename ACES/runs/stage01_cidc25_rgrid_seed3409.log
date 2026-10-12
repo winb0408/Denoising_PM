@@ -1,0 +1,274 @@
+Total Parameters: 1.5437M
+[stats] Training/A1.tif: mean=164.2054 std=121.7827
+[stats] Training/B1.tif: mean=196.3646 std=133.4750
+[stats] Training/C2.tif: mean=168.4460 std=227.9720
+[stats] Training/D2.tif: mean=196.0848 std=245.3548
+[d=1] epoch 1/20 start
+[d=1] epoch 2/20 start
+[d=1] epoch 3/20 start
+[d=1] epoch 4/20 start
+[d=1] epoch 5/20 start
+[d=1] epoch 5 mid-eval F2 fg=17.991 dB
+[d=1] epoch 6/20 start
+[d=1] epoch 7/20 start
+[d=1] epoch 8/20 start
+[d=1] epoch 9/20 start
+[d=1] epoch 10/20 start
+[d=1] epoch 10 mid-eval F2 fg=17.582 dB
+[d=1] epoch 11/20 start
+[d=1] epoch 12/20 start
+[d=1] epoch 13/20 start
+[d=1] epoch 14/20 start
+[d=1] epoch 15/20 start
+[d=1] epoch 15 mid-eval F2 fg=17.444 dB
+[d=1] epoch 16/20 start
+[d=1] epoch 17/20 start
+[d=1] epoch 18/20 start
+[d=1] epoch 19/20 start
+[d=1] epoch 20/20 start
+[d=1] epoch 20 mid-eval F2 fg=17.689 dB
+{
+  "distance": 1,
+  "elapsed_seconds": 1001.8499485329958,
+  "best_epoch": 5
+}
+Total Parameters: 1.5437M
+[d=2] epoch 1/20 start
+[d=2] epoch 2/20 start
+[d=2] epoch 3/20 start
+[d=2] epoch 4/20 start
+[d=2] epoch 5/20 start
+[d=2] epoch 5 mid-eval F2 fg=18.308 dB
+[d=2] epoch 6/20 start
+[d=2] epoch 7/20 start
+[d=2] epoch 8/20 start
+[d=2] epoch 9/20 start
+[d=2] epoch 10/20 start
+[d=2] epoch 10 mid-eval F2 fg=17.842 dB
+[d=2] epoch 11/20 start
+[d=2] epoch 12/20 start
+[d=2] epoch 13/20 start
+[d=2] epoch 14/20 start
+[d=2] epoch 15/20 start
+[d=2] epoch 15 mid-eval F2 fg=17.340 dB
+[d=2] epoch 16/20 start
+[d=2] epoch 17/20 start
+[d=2] epoch 18/20 start
+[d=2] epoch 19/20 start
+[d=2] epoch 20/20 start
+[d=2] epoch 20 mid-eval F2 fg=16.840 dB
+{
+  "distance": 2,
+  "elapsed_seconds": 972.3414565470302,
+  "best_epoch": 5
+}
+Total Parameters: 1.5437M
+[d=3] epoch 1/20 start
+[d=3] epoch 2/20 start
+[d=3] epoch 3/20 start
+[d=3] epoch 4/20 start
+[d=3] epoch 5/20 start
+[d=3] epoch 5 mid-eval F2 fg=18.389 dB
+[d=3] epoch 6/20 start
+[d=3] epoch 7/20 start
+[d=3] epoch 8/20 start
+[d=3] epoch 9/20 start
+[d=3] epoch 10/20 start
+[d=3] epoch 10 mid-eval F2 fg=17.787 dB
+[d=3] epoch 11/20 start
+[d=3] epoch 12/20 start
+[d=3] epoch 13/20 start
+[d=3] epoch 14/20 start
+[d=3] epoch 15/20 start
+[d=3] epoch 15 mid-eval F2 fg=17.405 dB
+[d=3] epoch 16/20 start
+[d=3] epoch 17/20 start
+[d=3] epoch 18/20 start
+[d=3] epoch 19/20 start
+[d=3] epoch 20/20 start
+[d=3] epoch 20 mid-eval F2 fg=17.696 dB
+{
+  "distance": 3,
+  "elapsed_seconds": 967.5113086529891,
+  "best_epoch": 5
+}
+Total Parameters: 1.5437M
+[d=4] epoch 1/20 start
+[d=4] epoch 2/20 start
+[d=4] epoch 3/20 start
+[d=4] epoch 4/20 start
+[d=4] epoch 5/20 start
+[d=4] epoch 5 mid-eval F2 fg=19.698 dB
+[d=4] epoch 6/20 start
+[d=4] epoch 7/20 start
+[d=4] epoch 8/20 start
+[d=4] epoch 9/20 start
+[d=4] epoch 10/20 start
+[d=4] epoch 10 mid-eval F2 fg=17.924 dB
+[d=4] epoch 11/20 start
+[d=4] epoch 12/20 start
+[d=4] epoch 13/20 start
+[d=4] epoch 14/20 start
+[d=4] epoch 15/20 start
+[d=4] epoch 15 mid-eval F2 fg=17.494 dB
+[d=4] epoch 16/20 start
+[d=4] epoch 17/20 start
+[d=4] epoch 18/20 start
+[d=4] epoch 19/20 start
+[d=4] epoch 20/20 start
+[d=4] epoch 20 mid-eval F2 fg=17.141 dB
+{
+  "distance": 4,
+  "elapsed_seconds": 967.7405825830065,
+  "best_epoch": 5
+}
+Total Parameters: 1.5437M
+[d=6] epoch 1/20 start
+[d=6] epoch 2/20 start
+[d=6] epoch 3/20 start
+[d=6] epoch 4/20 start
+[d=6] epoch 5/20 start
+[d=6] epoch 5 mid-eval F2 fg=22.256 dB
+[d=6] epoch 6/20 start
+[d=6] epoch 7/20 start
+[d=6] epoch 8/20 start
+[d=6] epoch 9/20 start
+[d=6] epoch 10/20 start
+[d=6] epoch 10 mid-eval F2 fg=23.173 dB
+[d=6] epoch 11/20 start
+[d=6] epoch 12/20 start
+[d=6] epoch 13/20 start
+[d=6] epoch 14/20 start
+[d=6] epoch 15/20 start
+[d=6] epoch 15 mid-eval F2 fg=20.045 dB
+[d=6] epoch 16/20 start
+[d=6] epoch 17/20 start
+[d=6] epoch 18/20 start
+[d=6] epoch 19/20 start
+[d=6] epoch 20/20 start
+[d=6] epoch 20 mid-eval F2 fg=17.290 dB
+{
+  "distance": 6,
+  "elapsed_seconds": 980.3292412739829,
+  "best_epoch": 10
+}
+Total Parameters: 1.5437M
+[d=8] epoch 1/20 start
+[d=8] epoch 2/20 start
+[d=8] epoch 3/20 start
+[d=8] epoch 4/20 start
+[d=8] epoch 5/20 start
+[d=8] epoch 5 mid-eval F2 fg=21.707 dB
+[d=8] epoch 6/20 start
+[d=8] epoch 7/20 start
+[d=8] epoch 8/20 start
+[d=8] epoch 9/20 start
+[d=8] epoch 10/20 start
+[d=8] epoch 10 mid-eval F2 fg=23.621 dB
+[d=8] epoch 11/20 start
+[d=8] epoch 12/20 start
+[d=8] epoch 13/20 start
+[d=8] epoch 14/20 start
+[d=8] epoch 15/20 start
+[d=8] epoch 15 mid-eval F2 fg=23.720 dB
+[d=8] epoch 16/20 start
+[d=8] epoch 17/20 start
+[d=8] epoch 18/20 start
+[d=8] epoch 19/20 start
+[d=8] epoch 20/20 start
+[d=8] epoch 20 mid-eval F2 fg=18.148 dB
+{
+  "distance": 8,
+  "elapsed_seconds": 971.1136866390007,
+  "best_epoch": 15
+}
+Total Parameters: 1.5437M
+[d=16] epoch 1/20 start
+[d=16] epoch 2/20 start
+[d=16] epoch 3/20 start
+[d=16] epoch 4/20 start
+[d=16] epoch 5/20 start
+[d=16] epoch 5 mid-eval F2 fg=20.379 dB
+[d=16] epoch 6/20 start
+[d=16] epoch 7/20 start
+[d=16] epoch 8/20 start
+[d=16] epoch 9/20 start
+[d=16] epoch 10/20 start
+[d=16] epoch 10 mid-eval F2 fg=22.857 dB
+[d=16] epoch 11/20 start
+[d=16] epoch 12/20 start
+[d=16] epoch 13/20 start
+[d=16] epoch 14/20 start
+[d=16] epoch 15/20 start
+[d=16] epoch 15 mid-eval F2 fg=22.508 dB
+[d=16] epoch 16/20 start
+[d=16] epoch 17/20 start
+[d=16] epoch 18/20 start
+[d=16] epoch 19/20 start
+[d=16] epoch 20/20 start
+[d=16] epoch 20 mid-eval F2 fg=20.340 dB
+{
+  "distance": 16,
+  "elapsed_seconds": 976.7561822150019,
+  "best_epoch": 10
+}
+Total Parameters: 1.5437M
+[d=32] epoch 1/20 start
+[d=32] epoch 2/20 start
+[d=32] epoch 3/20 start
+[d=32] epoch 4/20 start
+[d=32] epoch 5/20 start
+[d=32] epoch 5 mid-eval F2 fg=18.650 dB
+[d=32] epoch 6/20 start
+[d=32] epoch 7/20 start
+[d=32] epoch 8/20 start
+[d=32] epoch 9/20 start
+[d=32] epoch 10/20 start
+[d=32] epoch 10 mid-eval F2 fg=21.642 dB
+[d=32] epoch 11/20 start
+[d=32] epoch 12/20 start
+[d=32] epoch 13/20 start
+[d=32] epoch 14/20 start
+[d=32] epoch 15/20 start
+[d=32] epoch 15 mid-eval F2 fg=22.584 dB
+[d=32] epoch 16/20 start
+[d=32] epoch 17/20 start
+[d=32] epoch 18/20 start
+[d=32] epoch 19/20 start
+[d=32] epoch 20/20 start
+[d=32] epoch 20 mid-eval F2 fg=23.119 dB
+{
+  "distance": 32,
+  "elapsed_seconds": 960.8299947199994,
+  "best_epoch": 20
+}
+Total Parameters: 1.5437M
+[d=64] epoch 1/20 start
+[d=64] epoch 2/20 start
+[d=64] epoch 3/20 start
+[d=64] epoch 4/20 start
+[d=64] epoch 5/20 start
+[d=64] epoch 5 mid-eval F2 fg=22.997 dB
+[d=64] epoch 6/20 start
+[d=64] epoch 7/20 start
+[d=64] epoch 8/20 start
+[d=64] epoch 9/20 start
+[d=64] epoch 10/20 start
+[d=64] epoch 10 mid-eval F2 fg=24.580 dB
+[d=64] epoch 11/20 start
+[d=64] epoch 12/20 start
+[d=64] epoch 13/20 start
+[d=64] epoch 14/20 start
+[d=64] epoch 15/20 start
+[d=64] epoch 15 mid-eval F2 fg=24.640 dB
+[d=64] epoch 16/20 start
+[d=64] epoch 17/20 start
+[d=64] epoch 18/20 start
+[d=64] epoch 19/20 start
+[d=64] epoch 20/20 start
+[d=64] epoch 20 mid-eval F2 fg=24.493 dB
+{
+  "distance": 64,
+  "elapsed_seconds": 966.4938011720078,
+  "best_epoch": 15
+}
